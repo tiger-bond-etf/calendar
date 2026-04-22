@@ -13,16 +13,6 @@
         "amountRaw": 408.94,
         "counterparty": "키움LP",
         "note": ""
-      },
-      {
-        "id": "mo9n2l8ajwyn",
-        "fundCode": "490342",
-        "fundName": "TIGERCD금리플러스액티브(합성)",
-        "type": "설정",
-        "cu": "5",
-        "amountRaw": 5.01,
-        "counterparty": "d",
-        "note": ""
       }
     ],
     "업무": [
