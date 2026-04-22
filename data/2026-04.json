@@ -41,24 +41,9 @@
     ],
     "기타일정": [
       {
-        "id": "mo9dddym757x",
-        "title": "세미나 미팅",
-        "detail": "ㅇㅇㅇ"
-      },
-      {
-        "id": "mo9dra0eu56x",
-        "title": "dd",
-        "detail": "dddd"
-      },
-      {
-        "id": "mo9drd6xev5a",
-        "title": "gg",
-        "detail": "gggg"
-      },
-      {
-        "id": "mo9drfh2qfly",
-        "title": "ff",
-        "detail": "ffff"
+        "id": "mo9elb489llb",
+        "title": "달러선물 만기",
+        "detail": "만기 전일까지 롤오버 완료"
       }
     ],
     "업무일정": [
@@ -67,6 +52,22 @@
         "title": "달러선물 롤",
         "category": "롤오버",
         "detail": "ㅇㅇ"
+      }
+    ],
+    "체크리스트": [
+      {
+        "id": "mo9ejuu1xva0",
+        "member": "김시은",
+        "category": "기타",
+        "task": "CD플 풀펀 만기 확인",
+        "checked": true
+      },
+      {
+        "id": "mo9eknpq1b4r",
+        "member": "류연지",
+        "category": "기타",
+        "task": "490342 전단채 200억 만기 매매 필요",
+        "checked": true
       }
     ]
   }
