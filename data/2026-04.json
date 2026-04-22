@@ -17,5 +17,18 @@
         "detail": "490234, 490224펀드"
       }
     ]
+  },
+  "2026-04-20": {
+    "설정환매": [
+      {
+        "id": "mo9dcrqzbc0q",
+        "fundCode": "490350",
+        "fundName": "머니마켓",
+        "cu": "400",
+        "amount": "400억",
+        "counterparty": "키움LP",
+        "note": "ETN 교체"
+      }
+    ]
   }
 }
