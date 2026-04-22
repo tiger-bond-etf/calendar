@@ -46,6 +46,20 @@
         "title": "시은 매니저 오후 반차",
         "detail": ""
       }
+    ],
+    "리소스": [
+      {
+        "id": "mo9kgvu8dqaf",
+        "summary": "키증 ETN 매수",
+        "category": "ETN",
+        "resFundCode": "490238",
+        "resFundName": "TIGER CD금리투자KIS(합성)",
+        "resAmountRaw": 1000,
+        "setFundCode": "490350",
+        "setFundName": "TIGER머니마켓액티브",
+        "setAmountRaw": 400,
+        "note": ""
+      }
     ]
   },
   "2026-04-14": {
