@@ -48,6 +48,17 @@
         "setAmountRaw": 400,
         "note": "레포 -> ETN 교체 / 레포는 20일에 종료"
       }
+    ],
+    "업무": [
+      {
+        "id": "mo9nkcid5w9s",
+        "member": "김시은",
+        "fundCode": "490234",
+        "title": "달러선물 롤오버",
+        "category": "롤오버",
+        "detail": "490234, 490224펀드 대상",
+        "checked": false
+      }
     ]
   },
   "2026-04-22": {
