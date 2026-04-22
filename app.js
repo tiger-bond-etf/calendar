@@ -81,7 +81,6 @@ class GitHubStorage {
 
   async saveFile(path, data) {
     const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`;
-    // get current sha
     let sha = null;
     try {
       const r = await fetch(url, { headers: this.headers });
@@ -92,6 +91,29 @@ class GitHubStorage {
       method: 'PUT',
       headers: this.headers,
       body: JSON.stringify({ message: `Update ${path}`, content, ...(sha ? { sha } : {}) }),
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.message || `HTTP ${res.status}`); }
+  }
+
+  async listDataFiles() {
+    const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/data`;
+    try {
+      const res = await fetch(url, { headers: this.headers });
+      if (!res.ok) return [];
+      const files = await res.json();
+      // funds.json 제외, YYYY-MM.json 만
+      return files.filter(f => f.name !== 'funds.json' && f.name.endsWith('.json'));
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async deleteFile(path, sha) {
+    const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`;
+    const res = await fetch(url, {
+      method: 'DELETE',
+      headers: this.headers,
+      body: JSON.stringify({ message: `Delete ${path}`, sha }),
     });
     if (!res.ok) { const e = await res.json(); throw new Error(e.message || `HTTP ${res.status}`); }
   }
@@ -229,12 +251,14 @@ class CalendarApp {
 
       const funds = {};
       // 1행 = 헤더, 2행부터 데이터
+      // D열(index 3)=펀드코드, E열(index 4)=펀드명, J열(index 9)=CU순자산총액
       for (let i = 1; i < rows.length; i++) {
-        const [code, name, navPerCU] = rows[i];
-        const c = String(code || '').trim();
-        const n = String(name || '').trim();
+        const row = rows[i];
+        const c = String(row[3] || '').trim();   // D열: 펀드코드
+        const n = String(row[4] || '').trim();   // E열: 펀드명
+        const v = Number(row[9]) || 0;            // J열: CU순자산총액
         if (c && n) {
-          funds[c] = { name: n, navPerCU: Number(navPerCU) || 0 };
+          funds[c] = { name: n, navPerCU: v };
         }
       }
 
@@ -595,6 +619,47 @@ class CalendarApp {
       setStatus(`✕ 저장 실패: ${e.message}`, '#dc2626');
     } finally {
       if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '저장'; }
+    }
+  }
+
+  // ---- Delete All Data ----
+
+  async deleteAllData() {
+    if (!this.storage.token) {
+      showToast('GitHub 토큰이 설정되어 있어야 합니다.', 'error');
+      return;
+    }
+    const confirmed = confirm(
+      '⚠ 전체 캘린더 데이터를 삭제합니다.\n\n' +
+      '· GitHub 저장소의 모든 월별 데이터 파일이 삭제됩니다.\n' +
+      '· 펀드 데이터(funds.json)는 유지됩니다.\n' +
+      '· 이 작업은 되돌릴 수 없습니다.\n\n' +
+      '계속하시겠습니까?'
+    );
+    if (!confirmed) return;
+
+    const btn = document.getElementById('btn-delete-all');
+    if (btn) { btn.disabled = true; btn.textContent = '삭제 중...'; }
+
+    try {
+      const files = await this.storage.listDataFiles();
+      if (files.length === 0) {
+        showToast('삭제할 데이터가 없습니다.', '');
+        return;
+      }
+      for (const file of files) {
+        await this.storage.deleteFile(file.path, file.sha);
+      }
+      // 로컬 캐시 초기화
+      this.storage.cache = {};
+      await this.loadAndRender();
+      this.closeSettings();
+      showToast(`완료: ${files.length}개 파일 삭제됨`, 'success');
+    } catch (e) {
+      console.error(e);
+      showToast(`삭제 실패: ${e.message}`, 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '전체 데이터 삭제'; }
     }
   }
 

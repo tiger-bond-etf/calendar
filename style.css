@@ -527,6 +527,19 @@ select.input { appearance: auto; }
   margin-top: 6px;
 }
 .btn-fund-update:hover { background: #e2e8f0; }
+.btn-delete-all {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  padding: 8px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 6px;
+}
+.btn-delete-all:hover { background: #fee2e2; }
 .label {
   display: block;
   font-size: 13px;

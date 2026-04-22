@@ -158,8 +158,16 @@
           📂 Excel 파일 선택
         </button>
         <p class="settings-hint" style="margin-top:6px;">
-          Excel 형식: A열=펀드코드, B열=펀드명, C열=CU순자산총액(원)
+          Excel 형식: D열=펀드코드, E열=펀드명, J열=CU순자산총액(원)
         </p>
+
+        <div class="settings-divider"></div>
+
+        <label class="label" style="color:#ef4444;">위험 구역</label>
+        <p class="settings-hint">GitHub 저장소의 모든 캘린더 데이터(YYYY-MM.json)를 삭제합니다. 복구 불가.</p>
+        <button class="btn-delete-all" id="btn-delete-all" onclick="app.deleteAllData()">
+          🗑 전체 데이터 삭제
+        </button>
       </div>
       <div class="modal-footer">
         <button class="btn-save" onclick="app.saveSettings()">저장</button>
