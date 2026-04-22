@@ -61,6 +61,12 @@
         <button class="btn-close" id="btn-close">✕</button>
       </div>
 
+      <!-- 전체 내역 (위) -->
+      <div class="summary-section" id="summary-section"></div>
+
+      <!-- 입력 구분선 -->
+      <div class="input-divider">항목 추가</div>
+
       <!-- Tabs -->
       <div class="tab-bar">
         <button class="tab-btn active" data-tab="업무일정">업무일정</button>
@@ -69,86 +75,70 @@
         <button class="tab-btn" data-tab="체크리스트">업무 체크리스트</button>
       </div>
 
-      <!-- Tab Panels -->
+      <!-- Tab Panels (입력 폼만) -->
       <div class="tab-panels">
 
         <!-- 업무일정 -->
         <div class="tab-panel active" id="panel-업무일정">
-          <div class="item-list" id="list-업무일정"></div>
-          <div class="form-section">
-            <h4 class="form-title">+ 업무 추가</h4>
-            <div class="form-grid">
-              <input class="input" id="업무-제목" type="text" placeholder="제목">
-              <select class="input" id="업무-분류">
-                <option value="">분류 선택</option>
-                <option>리밸런싱</option>
-                <option>롤오버</option>
-                <option>분배</option>
-                <option>상장</option>
-                <option>기타</option>
-              </select>
-              <textarea class="input textarea" id="업무-상세" placeholder="상세내용" rows="2"></textarea>
-            </div>
-            <button class="btn-add" onclick="app.addItem('업무일정')">추가</button>
+          <div class="form-grid">
+            <input class="input" id="업무-제목" type="text" placeholder="제목">
+            <select class="input" id="업무-분류">
+              <option value="">분류 선택</option>
+              <option>리밸런싱</option>
+              <option>롤오버</option>
+              <option>분배</option>
+              <option>상장</option>
+              <option>기타</option>
+            </select>
+            <textarea class="input textarea" id="업무-상세" placeholder="상세내용" rows="2"></textarea>
           </div>
+          <button class="btn-add" onclick="app.addItem('업무일정')">추가</button>
         </div>
 
         <!-- 설정환매 -->
         <div class="tab-panel hidden" id="panel-설정환매">
-          <div class="item-list" id="list-설정환매"></div>
-          <div class="form-section">
-            <h4 class="form-title">+ 설정 / 환매 추가</h4>
-            <div class="form-grid form-grid-3">
-              <input class="input" id="설환-코드" type="text" placeholder="펀드코드">
-              <input class="input" id="설환-펀드명" type="text" placeholder="펀드명">
-              <input class="input" id="설환-cu" type="number" placeholder="CU">
-              <input class="input" id="설환-금액" type="text" placeholder="금액">
-              <input class="input" id="설환-거래상대방" type="text" placeholder="거래상대방">
-              <input class="input" id="설환-비고" type="text" placeholder="비고">
-            </div>
-            <button class="btn-add" onclick="app.addItem('설정환매')">추가</button>
+          <div class="form-grid form-grid-3">
+            <input class="input" id="설환-코드" type="text" placeholder="펀드코드">
+            <input class="input" id="설환-펀드명" type="text" placeholder="펀드명">
+            <input class="input" id="설환-cu" type="number" placeholder="CU">
+            <input class="input" id="설환-금액" type="text" placeholder="금액">
+            <input class="input" id="설환-거래상대방" type="text" placeholder="거래상대방">
+            <input class="input" id="설환-비고" type="text" placeholder="비고">
           </div>
+          <button class="btn-add" onclick="app.addItem('설정환매')">추가</button>
         </div>
 
         <!-- 기타일정 -->
         <div class="tab-panel hidden" id="panel-기타일정">
-          <div class="item-list" id="list-기타일정"></div>
-          <div class="form-section">
-            <h4 class="form-title">+ 일정 추가</h4>
-            <div class="form-grid">
-              <input class="input" id="기타-일정명" type="text" placeholder="일정명">
-              <textarea class="input textarea" id="기타-상세" placeholder="상세" rows="2"></textarea>
-            </div>
-            <button class="btn-add" onclick="app.addItem('기타일정')">추가</button>
+          <div class="form-grid">
+            <input class="input" id="기타-일정명" type="text" placeholder="일정명">
+            <textarea class="input textarea" id="기타-상세" placeholder="상세" rows="2"></textarea>
           </div>
+          <button class="btn-add" onclick="app.addItem('기타일정')">추가</button>
         </div>
 
         <!-- 업무 체크리스트 -->
         <div class="tab-panel hidden" id="panel-체크리스트">
-          <div class="item-list" id="list-체크리스트"></div>
-          <div class="form-section">
-            <h4 class="form-title">+ 체크리스트 추가</h4>
-            <div class="form-grid form-grid-3">
-              <select class="input" id="체크-팀원">
-                <option value="">본부원명 선택</option>
-                <option>김동명</option>
-                <option>류연지</option>
-                <option>최유진</option>
-                <option>김휘겸</option>
-                <option>김시은</option>
-              </select>
-              <select class="input" id="체크-분류">
-                <option value="">분류 선택</option>
-                <option>리밸런싱</option>
-                <option>롤오버</option>
-                <option>분배</option>
-                <option>상장</option>
-                <option>기타</option>
-              </select>
-              <input class="input span-full" id="체크-할일" type="text" placeholder="할일">
-            </div>
-            <button class="btn-add" onclick="app.addItem('체크리스트')">추가</button>
+          <div class="form-grid form-grid-3">
+            <select class="input" id="체크-팀원">
+              <option value="">본부원명 선택</option>
+              <option>김동명</option>
+              <option>류연지</option>
+              <option>최유진</option>
+              <option>김휘겸</option>
+              <option>김시은</option>
+            </select>
+            <select class="input" id="체크-분류">
+              <option value="">분류 선택</option>
+              <option>리밸런싱</option>
+              <option>롤오버</option>
+              <option>분배</option>
+              <option>상장</option>
+              <option>기타</option>
+            </select>
+            <input class="input span-full" id="체크-할일" type="text" placeholder="할일">
           </div>
+          <button class="btn-add" onclick="app.addItem('체크리스트')">추가</button>
         </div>
 
       </div>

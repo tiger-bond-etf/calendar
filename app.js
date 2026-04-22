@@ -264,7 +264,7 @@ class CalendarApp {
     document.getElementById('modal-date').textContent = formatDateKo(dateStr);
     document.getElementById('overlay').classList.remove('hidden');
     this.switchTab('업무일정');
-    this.renderAllTabs();
+    this.renderSummary();
   }
 
   closeModal() {
@@ -282,12 +282,64 @@ class CalendarApp {
     });
   }
 
-  renderAllTabs() {
+  renderSummary() {
+    const el = document.getElementById('summary-section');
     const dayData = this.getDayData();
-    this.renderList('업무일정', dayData['업무일정'] || []);
-    this.renderList('설정환매', dayData['설정환매'] || []);
-    this.renderList('기타일정', dayData['기타일정'] || []);
-    this.renderList('체크리스트', dayData['체크리스트'] || []);
+    el.innerHTML = '';
+
+    const sections = [
+      { key: '업무일정',  label: '업무일정',       cls: '' },
+      { key: '설정환매',  label: '설정환매',       cls: 'label-설정환매' },
+      { key: '기타일정',  label: '기타일정',       cls: 'label-기타일정' },
+      { key: '체크리스트', label: '업무 체크리스트', cls: 'label-체크리스트' },
+    ];
+
+    let hasAny = false;
+    for (const sec of sections) {
+      const items = dayData[sec.key] || [];
+      if (!items.length) continue;
+      hasAny = true;
+
+      const group = document.createElement('div');
+      group.className = 'summary-group';
+
+      const lbl = document.createElement('div');
+      lbl.className = `summary-group-label ${sec.cls}`;
+      lbl.textContent = sec.label;
+      group.appendChild(lbl);
+
+      for (const item of items) {
+        const card = document.createElement('div');
+        card.className = `summary-item${item.checked ? ' checked' : ''}`;
+
+        if (sec.key === '체크리스트') {
+          const cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.className = 'item-checkbox';
+          cb.checked = !!item.checked;
+          cb.addEventListener('change', () => this.toggleCheck(item.id));
+          card.appendChild(cb);
+        }
+
+        const body = document.createElement('div');
+        body.className = 'item-body';
+        body.appendChild(this.renderItemBody(sec.key, item));
+        card.appendChild(body);
+
+        const del = document.createElement('button');
+        del.className = 'btn-delete';
+        del.textContent = '✕';
+        del.addEventListener('click', () => this.deleteItem(sec.key, item.id));
+        card.appendChild(del);
+
+        group.appendChild(card);
+      }
+      el.appendChild(group);
+    }
+
+    if (!hasAny) {
+      el.innerHTML = '<div class="empty-state">등록된 내역이 없습니다. 아래에서 추가해주세요.</div>';
+    }
   }
 
   getDayData() {
@@ -483,7 +535,7 @@ class CalendarApp {
 
     dayData[tab].push(item);
     this.setDayData(dayData);
-    this.renderList(tab, dayData[tab]);
+    this.renderSummary();
     document.getElementById('save-status').textContent = '저장되지 않은 변경사항이 있습니다.';
   }
 
@@ -492,7 +544,7 @@ class CalendarApp {
     if (!dayData[tab]) return;
     dayData[tab] = dayData[tab].filter(i => i.id !== id);
     this.setDayData(dayData);
-    this.renderList(tab, dayData[tab]);
+    this.renderSummary();
     document.getElementById('save-status').textContent = '저장되지 않은 변경사항이 있습니다.';
   }
 
@@ -503,7 +555,7 @@ class CalendarApp {
     if (item) {
       item.checked = !item.checked;
       this.setDayData(dayData);
-      this.renderList('체크리스트', items);
+      this.renderSummary();
       document.getElementById('save-status').textContent = '저장되지 않은 변경사항이 있습니다.';
     }
   }
