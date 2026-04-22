@@ -108,11 +108,13 @@ body {
 }
 .badge-리밸런싱 { background: #3b82f6; }
 .badge-롤오버   { background: #8b5cf6; }
+.badge-매매     { background: #ec4899; }
+.badge-스왑     { background: #14b8a6; }
 .badge-분배     { background: #059669; }
 .badge-상장     { background: #d97706; }
 .badge-기타     { background: #6b7280; }
 .badge-설정환매 { background: #dc2626; }
-.badge-기타일정 { background: #0891b2; }
+.badge-일정     { background: #0891b2; }
 
 /* ===== Calendar ===== */
 .calendar-wrap {
@@ -186,11 +188,13 @@ body {
 }
 .cell-event.cat-리밸런싱 { background: #3b82f6; }
 .cell-event.cat-롤오버   { background: #8b5cf6; }
+.cell-event.cat-매매     { background: #ec4899; }
+.cell-event.cat-스왑     { background: #14b8a6; }
 .cell-event.cat-분배     { background: #059669; }
 .cell-event.cat-상장     { background: #d97706; }
 .cell-event.cat-기타     { background: #6b7280; }
 .cell-event.cat-설정환매 { background: #dc2626; }
-.cell-event.cat-기타일정 { background: #0891b2; }
+.cell-event.cat-일정     { background: #0891b2; }
 
 .cell-more {
   font-size: 10px;
@@ -506,6 +510,23 @@ select.input { appearance: auto; }
 
 /* ===== Settings ===== */
 .settings-body { padding: 20px; }
+.settings-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 16px 0;
+}
+.btn-fund-update {
+  background: #f0f2f5;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 8px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 6px;
+}
+.btn-fund-update:hover { background: #e2e8f0; }
 .label {
   display: block;
   font-size: 13px;

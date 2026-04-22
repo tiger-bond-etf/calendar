@@ -30,11 +30,13 @@
     <div class="legend">
       <span class="legend-item"><span class="badge badge-리밸런싱"></span>리밸런싱</span>
       <span class="legend-item"><span class="badge badge-롤오버"></span>롤오버</span>
+      <span class="legend-item"><span class="badge badge-매매"></span>매매</span>
+      <span class="legend-item"><span class="badge badge-스왑"></span>스왑</span>
       <span class="legend-item"><span class="badge badge-분배"></span>분배</span>
       <span class="legend-item"><span class="badge badge-상장"></span>상장</span>
       <span class="legend-item"><span class="badge badge-기타"></span>기타</span>
       <span class="legend-item"><span class="badge badge-설정환매"></span>설정환매</span>
-      <span class="legend-item"><span class="badge badge-기타일정"></span>기타일정</span>
+      <span class="legend-item"><span class="badge badge-일정"></span>일정</span>
     </div>
 
     <!-- Calendar -->
@@ -69,58 +71,27 @@
 
       <!-- Tabs -->
       <div class="tab-bar">
-        <button class="tab-btn active" data-tab="업무일정">업무일정</button>
+        <button class="tab-btn active" data-tab="일정">일정</button>
+        <button class="tab-btn" data-tab="업무">업무</button>
         <button class="tab-btn" data-tab="설정환매">설정환매</button>
-        <button class="tab-btn" data-tab="기타일정">기타일정</button>
-        <button class="tab-btn" data-tab="체크리스트">업무 체크리스트</button>
       </div>
 
       <!-- Tab Panels (입력 폼만) -->
       <div class="tab-panels">
 
-        <!-- 업무일정 -->
-        <div class="tab-panel active" id="panel-업무일정">
+        <!-- 일정 -->
+        <div class="tab-panel active" id="panel-일정">
           <div class="form-grid">
-            <input class="input" id="업무-제목" type="text" placeholder="제목">
-            <select class="input" id="업무-분류">
-              <option value="">분류 선택</option>
-              <option>리밸런싱</option>
-              <option>롤오버</option>
-              <option>분배</option>
-              <option>상장</option>
-              <option>기타</option>
-            </select>
-            <textarea class="input textarea" id="업무-상세" placeholder="상세내용" rows="2"></textarea>
+            <input class="input span-full" id="일정-일정명" type="text" placeholder="일정명">
+            <textarea class="input textarea span-full" id="일정-상세" placeholder="상세" rows="2"></textarea>
           </div>
-          <button class="btn-add" onclick="app.addItem('업무일정')">추가</button>
+          <button class="btn-add" onclick="app.addItem('일정')">추가</button>
         </div>
 
-        <!-- 설정환매 -->
-        <div class="tab-panel hidden" id="panel-설정환매">
+        <!-- 업무 (업무일정 + 체크리스트 합침) -->
+        <div class="tab-panel hidden" id="panel-업무">
           <div class="form-grid form-grid-3">
-            <input class="input" id="설환-코드" type="text" placeholder="펀드코드">
-            <input class="input" id="설환-펀드명" type="text" placeholder="펀드명">
-            <input class="input" id="설환-cu" type="number" placeholder="CU">
-            <input class="input" id="설환-금액" type="text" placeholder="금액">
-            <input class="input" id="설환-거래상대방" type="text" placeholder="거래상대방">
-            <input class="input" id="설환-비고" type="text" placeholder="비고">
-          </div>
-          <button class="btn-add" onclick="app.addItem('설정환매')">추가</button>
-        </div>
-
-        <!-- 기타일정 -->
-        <div class="tab-panel hidden" id="panel-기타일정">
-          <div class="form-grid">
-            <input class="input" id="기타-일정명" type="text" placeholder="일정명">
-            <textarea class="input textarea" id="기타-상세" placeholder="상세" rows="2"></textarea>
-          </div>
-          <button class="btn-add" onclick="app.addItem('기타일정')">추가</button>
-        </div>
-
-        <!-- 업무 체크리스트 -->
-        <div class="tab-panel hidden" id="panel-체크리스트">
-          <div class="form-grid form-grid-3">
-            <select class="input" id="체크-팀원">
+            <select class="input" id="업무-본부원명">
               <option value="">본부원명 선택</option>
               <option>김동명</option>
               <option>류연지</option>
@@ -128,17 +99,33 @@
               <option>김휘겸</option>
               <option>김시은</option>
             </select>
-            <select class="input" id="체크-분류">
+            <input class="input" id="업무-제목" type="text" placeholder="제목">
+            <select class="input" id="업무-분류">
               <option value="">분류 선택</option>
               <option>리밸런싱</option>
               <option>롤오버</option>
+              <option>매매</option>
+              <option>스왑</option>
               <option>분배</option>
               <option>상장</option>
               <option>기타</option>
             </select>
-            <input class="input span-full" id="체크-할일" type="text" placeholder="할일">
+            <textarea class="input textarea span-full" id="업무-상세" placeholder="상세내용" rows="2"></textarea>
           </div>
-          <button class="btn-add" onclick="app.addItem('체크리스트')">추가</button>
+          <button class="btn-add" onclick="app.addItem('업무')">추가</button>
+        </div>
+
+        <!-- 설정환매 -->
+        <div class="tab-panel hidden" id="panel-설정환매">
+          <div class="form-grid form-grid-3">
+            <input class="input" id="설환-코드" type="text" placeholder="펀드코드 (입력 후 Tab)">
+            <input class="input" id="설환-펀드명" type="text" placeholder="펀드명 (자동입력)">
+            <input class="input" id="설환-cu" type="number" placeholder="CU">
+            <input class="input" id="설환-금액" type="text" placeholder="금액 (자동계산)" readonly style="background:#f8fafc; color:#64748b;">
+            <input class="input" id="설환-거래상대방" type="text" placeholder="거래상대방">
+            <input class="input" id="설환-비고" type="text" placeholder="비고">
+          </div>
+          <button class="btn-add" onclick="app.addItem('설정환매')">추가</button>
         </div>
 
       </div>
@@ -162,6 +149,17 @@
         <label class="label">GitHub Personal Access Token</label>
         <input class="input" id="input-token" type="password" placeholder="ghp_...">
         <p class="settings-hint">토큰은 이 브라우저에만 저장됩니다. 타인과 공유하지 마세요.</p>
+
+        <div class="settings-divider"></div>
+
+        <label class="label">펀드 데이터 업데이트</label>
+        <p class="settings-hint" id="fund-updated-at">마지막 업데이트: -</p>
+        <button class="btn-fund-update" onclick="document.getElementById('fund-file-input').click()">
+          📂 Excel 파일 선택
+        </button>
+        <p class="settings-hint" style="margin-top:6px;">
+          Excel 형식: A열=펀드코드, B열=펀드명, C열=CU순자산총액(원)
+        </p>
       </div>
       <div class="modal-footer">
         <button class="btn-save" onclick="app.saveSettings()">저장</button>
@@ -169,9 +167,14 @@
     </div>
   </div>
 
+  <!-- Hidden file input for fund Excel -->
+  <input type="file" id="fund-file-input" accept=".xlsx,.xls,.csv" style="display:none">
+
   <!-- Toast Notification -->
   <div class="toast hidden" id="toast"></div>
 
+  <!-- SheetJS for Excel parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

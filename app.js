@@ -1,18 +1,17 @@
 /* ===================================================
    채권ETF운용본부 업무 캘린더 — app.js
-   GitHub API를 통해 데이터를 저장/불러옵니다.
 =================================================== */
 
 const CONFIG = {
   owner: 'tiger-bond-etf',
-  repo: 'calendar',
+  repo:  'calendar',
 };
-
-const CATEGORIES = ['리밸런싱', '롤오버', '분배', '상장', '기타'];
 
 const CAT_COLOR = {
   '리밸런싱': '#3b82f6',
   '롤오버':   '#8b5cf6',
+  '매매':     '#ec4899',
+  '스왑':     '#14b8a6',
   '분배':     '#059669',
   '상장':     '#d97706',
   '기타':     '#6b7280',
@@ -23,7 +22,7 @@ const CAT_COLOR = {
 class GitHubStorage {
   constructor() {
     this.token = localStorage.getItem('gh_token') || '';
-    this.cache = {}; // key: 'YYYY-MM' → { data: {}, sha: null }
+    this.cache = {};
   }
 
   get headers() {
@@ -45,19 +44,14 @@ class GitHubStorage {
   async loadMonth(year, month) {
     const key = this.cacheKey(year, month);
     if (this.cache[key]) return this.cache[key];
-
     if (!this.token) {
       this.cache[key] = { data: {}, sha: null };
       return this.cache[key];
     }
-
     const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${this.filePath(year, month)}`;
     try {
       const res = await fetch(url, { headers: this.headers });
-      if (res.status === 404) {
-        this.cache[key] = { data: {}, sha: null };
-        return this.cache[key];
-      }
+      if (res.status === 404) { this.cache[key] = { data: {}, sha: null }; return this.cache[key]; }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const file = await res.json();
       const raw = decodeURIComponent(escape(atob(file.content.replace(/\n/g, ''))));
@@ -75,30 +69,43 @@ class GitHubStorage {
     const sha = this.cache[key]?.sha || null;
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
     const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${this.filePath(year, month)}`;
-
-    const body = {
-      message: `Update ${key}`,
-      content,
-      ...(sha ? { sha } : {}),
-    };
-
     const res = await fetch(url, {
       method: 'PUT',
       headers: this.headers,
-      body: JSON.stringify(body),
+      body: JSON.stringify({ message: `Update ${key}`, content, ...(sha ? { sha } : {}) }),
     });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || `HTTP ${res.status}`);
-    }
-
+    if (!res.ok) { const e = await res.json(); throw new Error(e.message || `HTTP ${res.status}`); }
     const result = await res.json();
     this.cache[key] = { data, sha: result.content.sha };
   }
 
-  invalidate(year, month) {
-    delete this.cache[this.cacheKey(year, month)];
+  async saveFile(path, data) {
+    const url = `https://api.github.com/repos/${CONFIG.owner}/${CONFIG.repo}/contents/${path}`;
+    // get current sha
+    let sha = null;
+    try {
+      const r = await fetch(url, { headers: this.headers });
+      if (r.ok) { const f = await r.json(); sha = f.sha; }
+    } catch (_) {}
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: this.headers,
+      body: JSON.stringify({ message: `Update ${path}`, content, ...(sha ? { sha } : {}) }),
+    });
+    if (!res.ok) { const e = await res.json(); throw new Error(e.message || `HTTP ${res.status}`); }
+  }
+
+  async loadFundData() {
+    // public raw URL — no token needed
+    const url = `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/data/funds.json?t=${Date.now()}`;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
   }
 }
 
@@ -120,6 +127,14 @@ function isToday(year, month, day) {
   return t.getFullYear() === year && t.getMonth() + 1 === month && t.getDate() === day;
 }
 
+function formatAmount(won) {
+  const n = Number(won);
+  if (!n) return '';
+  if (n >= 100000000) return (n / 100000000).toFixed(0) + '억원';
+  if (n >= 10000)     return (n / 10000).toFixed(0) + '만원';
+  return n.toLocaleString() + '원';
+}
+
 function showToast(msg, type = '') {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -131,23 +146,23 @@ function showToast(msg, type = '') {
 
 class CalendarApp {
   constructor() {
-    this.storage = new GitHubStorage();
-    this.now = new Date();
-    this.year = this.now.getFullYear();
-    this.month = this.now.getMonth() + 1;
-    this.monthEntry = null;   // { data, sha }
-    this.openDate = null;     // 'YYYY-MM-DD'
-    this.activeTab = '업무일정';
+    this.storage    = new GitHubStorage();
+    this.now        = new Date();
+    this.year       = this.now.getFullYear();
+    this.month      = this.now.getMonth() + 1;
+    this.monthEntry = null;
+    this.openDate   = null;
+    this.activeTab  = '일정';
+    this.fundData   = null;       // { funds: { code: { name, navPerCU } }, updatedAt }
+    this.curNavPerCU = 0;         // navPerCU for currently entered fund code
   }
 
   async init() {
     this.bindEvents();
     await this.loadAndRender();
-
-    // 토큰 없으면 설정 유도
-    if (!this.storage.token) {
-      showToast('설정에서 GitHub 토큰을 입력해주세요.', 'error');
-    }
+    this.fundData = await this.storage.loadFundData();
+    this.updateFundUpdatedAt();
+    if (!this.storage.token) showToast('설정에서 GitHub 토큰을 입력해주세요.', 'error');
   }
 
   bindEvents() {
@@ -162,11 +177,85 @@ class CalendarApp {
     document.getElementById('settings-overlay').addEventListener('click', e => {
       if (e.target === e.currentTarget) this.closeSettings();
     });
-
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
     });
+
+    // 펀드코드 자동완성
+    document.getElementById('설환-코드').addEventListener('blur', () => this.onFundCodeBlur());
+
+    // CU 자동계산
+    document.getElementById('설환-cu').addEventListener('input', () => this.calcAmount());
+
+    // Excel 파일 선택
+    document.getElementById('fund-file-input').addEventListener('change', e => {
+      if (e.target.files[0]) this.handleFundUpdate(e.target.files[0]);
+      e.target.value = '';
+    });
   }
+
+  // ---- Fund auto-fill ----
+
+  onFundCodeBlur() {
+    const code = document.getElementById('설환-코드').value.trim();
+    if (!code || !this.fundData?.funds) return;
+    const fund = this.fundData.funds[code];
+    if (fund) {
+      document.getElementById('설환-펀드명').value = fund.name;
+      this.curNavPerCU = fund.navPerCU || 0;
+      this.calcAmount();
+    }
+  }
+
+  calcAmount() {
+    const cu = parseFloat(document.getElementById('설환-cu').value) || 0;
+    const amount = cu * this.curNavPerCU;
+    document.getElementById('설환-금액').value = amount > 0 ? formatAmount(amount) : '';
+  }
+
+  // ---- Fund Excel update ----
+
+  async handleFundUpdate(file) {
+    if (!this.storage.token) {
+      showToast('GitHub 토큰이 설정되어 있어야 업데이트할 수 있습니다.', 'error');
+      return;
+    }
+    showToast('파일 읽는 중...', '');
+    try {
+      const data = await file.arrayBuffer();
+      const wb = XLSX.read(data, { type: 'array' });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+      const funds = {};
+      // 1행 = 헤더, 2행부터 데이터
+      for (let i = 1; i < rows.length; i++) {
+        const [code, name, navPerCU] = rows[i];
+        const c = String(code || '').trim();
+        const n = String(name || '').trim();
+        if (c && n) {
+          funds[c] = { name: n, navPerCU: Number(navPerCU) || 0 };
+        }
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      const fundData = { updatedAt: today, funds };
+      await this.storage.saveFile('data/funds.json', fundData);
+      this.fundData = fundData;
+      this.updateFundUpdatedAt();
+      showToast(`펀드 데이터 업데이트 완료 (${Object.keys(funds).length}개 펀드)`, 'success');
+    } catch (e) {
+      console.error(e);
+      showToast(`업데이트 실패: ${e.message}`, 'error');
+    }
+  }
+
+  updateFundUpdatedAt() {
+    const el = document.getElementById('fund-updated-at');
+    if (el) el.textContent = `마지막 업데이트: ${this.fundData?.updatedAt || '-'}`;
+  }
+
+  // ---- Month ----
 
   async changeMonth(delta) {
     this.month += delta;
@@ -176,34 +265,29 @@ class CalendarApp {
   }
 
   async loadAndRender() {
-    document.getElementById('month-title').textContent =
-      `${this.year}년 ${this.month}월`;
+    document.getElementById('month-title').textContent = `${this.year}년 ${this.month}월`;
     this.monthEntry = await this.storage.loadMonth(this.year, this.month);
     this.renderCalendar();
   }
 
-  // ---- Calendar Render ----
+  // ---- Calendar ----
 
   renderCalendar() {
     const grid = document.getElementById('calendar-grid');
     grid.innerHTML = '';
-
-    const firstDow = new Date(this.year, this.month - 1, 1).getDay();
+    const firstDow   = new Date(this.year, this.month - 1, 1).getDay();
     const daysInMonth = new Date(this.year, this.month, 0).getDate();
     const data = this.monthEntry?.data || {};
 
-    // Empty cells before 1st
     for (let i = 0; i < firstDow; i++) {
       const el = document.createElement('div');
       el.className = 'cell empty';
       grid.appendChild(el);
     }
-
     for (let d = 1; d <= daysInMonth; d++) {
-      const dateStr = `${this.year}-${String(this.month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const dateStr = `${this.year}-${String(this.month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
       const dow = (firstDow + d - 1) % 7;
-      const dayData = data[dateStr] || {};
-      grid.appendChild(this.renderCell(d, dateStr, dow, dayData));
+      grid.appendChild(this.renderCell(d, dateStr, dow, data[dateStr] || {}));
     }
   }
 
@@ -216,13 +300,11 @@ class CalendarApp {
     cell.className = cls;
     cell.addEventListener('click', () => this.openModal(dateStr));
 
-    // Day number
     const dayEl = document.createElement('div');
     dayEl.className = 'cell-day';
     dayEl.textContent = d;
     cell.appendChild(dayEl);
 
-    // Events
     const eventsEl = document.createElement('div');
     eventsEl.className = 'cell-events';
     const events = this.getCellEvents(dayData);
@@ -245,15 +327,12 @@ class CalendarApp {
 
   getCellEvents(dayData) {
     const events = [];
-    (dayData['업무일정'] || []).forEach(item => {
-      events.push({ cat: item.category || '기타', label: item.title || '' });
-    });
-    (dayData['설정환매'] || []).forEach(item => {
-      events.push({ cat: '설정환매', label: item.fundName || item.fundCode || '설정/환매' });
-    });
-    (dayData['기타일정'] || []).forEach(item => {
-      events.push({ cat: '기타일정', label: item.title || '' });
-    });
+    (dayData['일정'] || []).forEach(item =>
+      events.push({ cat: '일정', label: item.title || '' }));
+    (dayData['업무'] || []).forEach(item =>
+      events.push({ cat: item.category || '기타', label: item.title || '' }));
+    (dayData['설정환매'] || []).forEach(item =>
+      events.push({ cat: '설정환매', label: item.fundName || item.fundCode || '설정/환매' }));
     return events;
   }
 
@@ -261,9 +340,10 @@ class CalendarApp {
 
   async openModal(dateStr) {
     this.openDate = dateStr;
+    this.curNavPerCU = 0;
     document.getElementById('modal-date').textContent = formatDateKo(dateStr);
     document.getElementById('overlay').classList.remove('hidden');
-    this.switchTab('업무일정');
+    this.switchTab('일정');
     this.renderSummary();
   }
 
@@ -277,10 +357,22 @@ class CalendarApp {
     this.activeTab = tab;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.tab-panel').forEach(p => {
-      const id = p.id.replace('panel-', '');
-      p.classList.toggle('hidden', id !== tab);
+      p.classList.toggle('hidden', p.id !== `panel-${tab}`);
     });
   }
+
+  getDayData() {
+    if (!this.openDate) return {};
+    return (this.monthEntry?.data || {})[this.openDate] || {};
+  }
+
+  setDayData(dayData) {
+    if (!this.openDate) return;
+    if (!this.monthEntry) this.monthEntry = { data: {}, sha: null };
+    this.monthEntry.data[this.openDate] = dayData;
+  }
+
+  // ---- Summary ----
 
   renderSummary() {
     const el = document.getElementById('summary-section');
@@ -288,10 +380,9 @@ class CalendarApp {
     el.innerHTML = '';
 
     const sections = [
-      { key: '업무일정',  label: '업무일정',       cls: '' },
-      { key: '설정환매',  label: '설정환매',       cls: 'label-설정환매' },
-      { key: '기타일정',  label: '기타일정',       cls: 'label-기타일정' },
-      { key: '체크리스트', label: '업무 체크리스트', cls: 'label-체크리스트' },
+      { key: '일정',    label: '일정',          cls: 'label-일정' },
+      { key: '업무',    label: '업무',          cls: '' },
+      { key: '설정환매', label: '설정환매',      cls: 'label-설정환매' },
     ];
 
     let hasAny = false;
@@ -312,7 +403,7 @@ class CalendarApp {
         const card = document.createElement('div');
         card.className = `summary-item${item.checked ? ' checked' : ''}`;
 
-        if (sec.key === '체크리스트') {
+        if (sec.key === '업무') {
           const cb = document.createElement('input');
           cb.type = 'checkbox';
           cb.className = 'item-checkbox';
@@ -342,66 +433,22 @@ class CalendarApp {
     }
   }
 
-  getDayData() {
-    if (!this.openDate) return {};
-    return (this.monthEntry?.data || {})[this.openDate] || {};
-  }
-
-  setDayData(dayData) {
-    if (!this.openDate) return;
-    if (!this.monthEntry) this.monthEntry = { data: {}, sha: null };
-    this.monthEntry.data[this.openDate] = dayData;
-  }
-
-  // ---- List Render ----
-
-  renderList(tab, items) {
-    const listEl = document.getElementById(`list-${tab}`);
-    listEl.innerHTML = '';
-
-    if (!items || items.length === 0) {
-      listEl.innerHTML = '<div class="empty-state">항목이 없습니다.</div>';
-      return;
-    }
-
-    items.forEach(item => {
-      listEl.appendChild(this.renderItem(tab, item));
-    });
-  }
-
-  renderItem(tab, item) {
-    const card = document.createElement('div');
-    card.className = `item-card${item.checked ? ' checked' : ''}`;
-    card.dataset.id = item.id;
-
-    if (tab === '체크리스트') {
-      const cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.className = 'item-checkbox';
-      cb.checked = !!item.checked;
-      cb.addEventListener('change', () => this.toggleCheck(item.id));
-      card.appendChild(cb);
-    }
-
-    const body = document.createElement('div');
-    body.className = 'item-body';
-    body.appendChild(this.renderItemBody(tab, item));
-    card.appendChild(body);
-
-    const del = document.createElement('button');
-    del.className = 'btn-delete';
-    del.textContent = '✕';
-    del.title = '삭제';
-    del.addEventListener('click', () => this.deleteItem(tab, item.id));
-    card.appendChild(del);
-
-    return card;
-  }
-
   renderItemBody(tab, item) {
     const frag = document.createDocumentFragment();
 
-    if (tab === '업무일정') {
+    if (tab === '일정') {
+      const title = document.createElement('div');
+      title.className = 'item-title';
+      title.textContent = item.title || '';
+      frag.appendChild(title);
+      if (item.detail) {
+        const det = document.createElement('div');
+        det.className = 'item-detail';
+        det.textContent = item.detail;
+        frag.appendChild(det);
+      }
+
+    } else if (tab === '업무') {
       const title = document.createElement('div');
       title.className = 'item-title';
       title.textContent = item.title || '';
@@ -409,6 +456,11 @@ class CalendarApp {
 
       const meta = document.createElement('div');
       meta.className = 'item-meta';
+      if (item.member) {
+        const span = document.createElement('span');
+        span.textContent = item.member;
+        meta.appendChild(span);
+      }
       if (item.category) {
         const badge = document.createElement('span');
         badge.className = 'item-badge';
@@ -417,7 +469,6 @@ class CalendarApp {
         meta.appendChild(badge);
       }
       frag.appendChild(meta);
-
       if (item.detail) {
         const det = document.createElement('div');
         det.className = 'item-detail';
@@ -428,7 +479,7 @@ class CalendarApp {
     } else if (tab === '설정환매') {
       const title = document.createElement('div');
       title.className = 'item-title';
-      title.textContent = `${item.fundName || item.fundCode || '-'}`;
+      title.textContent = item.fundName || item.fundCode || '-';
       frag.appendChild(title);
 
       const meta = document.createElement('div');
@@ -440,43 +491,6 @@ class CalendarApp {
       if (item.counterparty) parts.push(`거래처: ${item.counterparty}`);
       if (item.note)     parts.push(`비고: ${item.note}`);
       meta.textContent = parts.join('  |  ');
-      frag.appendChild(meta);
-
-    } else if (tab === '기타일정') {
-      const title = document.createElement('div');
-      title.className = 'item-title';
-      title.textContent = item.title || '';
-      frag.appendChild(title);
-
-      if (item.detail) {
-        const det = document.createElement('div');
-        det.className = 'item-detail';
-        det.textContent = item.detail;
-        frag.appendChild(det);
-      }
-
-    } else if (tab === '체크리스트') {
-      const title = document.createElement('div');
-      title.className = 'item-title';
-      title.textContent = item.task || '';
-      frag.appendChild(title);
-
-      const meta = document.createElement('div');
-      meta.className = 'item-meta';
-      const parts = [];
-      if (item.member)   parts.push(item.member);
-      if (item.category) {
-        const badge = document.createElement('span');
-        badge.className = 'item-badge';
-        badge.style.background = CAT_COLOR[item.category] || '#6b7280';
-        badge.textContent = item.category;
-        meta.appendChild(badge);
-      }
-      if (parts.length) {
-        const span = document.createElement('span');
-        span.textContent = parts.join(' · ');
-        meta.prepend(span);
-      }
       frag.appendChild(meta);
     }
 
@@ -491,46 +505,38 @@ class CalendarApp {
 
     let item = { id: genId() };
 
-    if (tab === '업무일정') {
-      const title = document.getElementById('업무-제목').value.trim();
-      const category = document.getElementById('업무-분류').value;
-      const detail = document.getElementById('업무-상세').value.trim();
-      if (!title) { showToast('제목을 입력해주세요.', 'error'); return; }
-      item = { ...item, title, category, detail };
-      document.getElementById('업무-제목').value = '';
-      document.getElementById('업무-분류').value = '';
-      document.getElementById('업무-상세').value = '';
-
-    } else if (tab === '설정환매') {
-      const fundCode      = document.getElementById('설환-코드').value.trim();
-      const fundName      = document.getElementById('설환-펀드명').value.trim();
-      const cu            = document.getElementById('설환-cu').value.trim();
-      const amount        = document.getElementById('설환-금액').value.trim();
-      const counterparty  = document.getElementById('설환-거래상대방').value.trim();
-      const note          = document.getElementById('설환-비고').value.trim();
-      if (!fundCode && !fundName) { showToast('펀드코드 또는 펀드명을 입력해주세요.', 'error'); return; }
-      item = { ...item, fundCode, fundName, cu, amount, counterparty, note };
-      ['설환-코드','설환-펀드명','설환-cu','설환-금액','설환-거래상대방','설환-비고'].forEach(id => {
-        document.getElementById(id).value = '';
-      });
-
-    } else if (tab === '기타일정') {
-      const title  = document.getElementById('기타-일정명').value.trim();
-      const detail = document.getElementById('기타-상세').value.trim();
+    if (tab === '일정') {
+      const title  = document.getElementById('일정-일정명').value.trim();
+      const detail = document.getElementById('일정-상세').value.trim();
       if (!title) { showToast('일정명을 입력해주세요.', 'error'); return; }
       item = { ...item, title, detail };
-      document.getElementById('기타-일정명').value = '';
-      document.getElementById('기타-상세').value = '';
+      document.getElementById('일정-일정명').value = '';
+      document.getElementById('일정-상세').value  = '';
 
-    } else if (tab === '체크리스트') {
-      const member   = document.getElementById('체크-팀원').value;
-      const category = document.getElementById('체크-분류').value;
-      const task     = document.getElementById('체크-할일').value.trim();
-      if (!task) { showToast('할일을 입력해주세요.', 'error'); return; }
-      item = { ...item, member, category, task, checked: false };
-      document.getElementById('체크-팀원').value = '';
-      document.getElementById('체크-분류').value = '';
-      document.getElementById('체크-할일').value = '';
+    } else if (tab === '업무') {
+      const member   = document.getElementById('업무-본부원명').value;
+      const title    = document.getElementById('업무-제목').value.trim();
+      const category = document.getElementById('업무-분류').value;
+      const detail   = document.getElementById('업무-상세').value.trim();
+      if (!title) { showToast('제목을 입력해주세요.', 'error'); return; }
+      item = { ...item, member, title, category, detail, checked: false };
+      document.getElementById('업무-본부원명').value = '';
+      document.getElementById('업무-제목').value    = '';
+      document.getElementById('업무-분류').value    = '';
+      document.getElementById('업무-상세').value    = '';
+
+    } else if (tab === '설정환매') {
+      const fundCode     = document.getElementById('설환-코드').value.trim();
+      const fundName     = document.getElementById('설환-펀드명').value.trim();
+      const cu           = document.getElementById('설환-cu').value.trim();
+      const amount       = document.getElementById('설환-금액').value.trim();
+      const counterparty = document.getElementById('설환-거래상대방').value.trim();
+      const note         = document.getElementById('설환-비고').value.trim();
+      if (!fundCode && !fundName) { showToast('펀드코드 또는 펀드명을 입력해주세요.', 'error'); return; }
+      item = { ...item, fundCode, fundName, cu, amount, counterparty, note };
+      ['설환-코드','설환-펀드명','설환-cu','설환-금액','설환-거래상대방','설환-비고'].forEach(id =>
+        document.getElementById(id).value = '');
+      this.curNavPerCU = 0;
     }
 
     dayData[tab].push(item);
@@ -550,7 +556,7 @@ class CalendarApp {
 
   toggleCheck(id) {
     const dayData = this.getDayData();
-    const items = dayData['체크리스트'] || [];
+    const items = dayData['업무'] || [];
     const item = items.find(i => i.id === id);
     if (item) {
       item.checked = !item.checked;
@@ -564,7 +570,7 @@ class CalendarApp {
 
   async saveDay() {
     const statusEl = document.getElementById('save-status');
-    const saveBtn = document.getElementById('btn-save');
+    const saveBtn  = document.getElementById('btn-save');
 
     const setStatus = (msg, color) => {
       statusEl.textContent = msg;
@@ -580,14 +586,12 @@ class CalendarApp {
     setStatus('', '');
 
     try {
-      console.log('[저장 시작]', this.year, this.month);
       await this.storage.saveMonth(this.year, this.month, this.monthEntry.data);
-      console.log('[저장 완료]');
       setStatus('✓ 저장되었습니다.', '#059669');
       this.renderCalendar();
       setTimeout(() => setStatus('', ''), 3000);
     } catch (e) {
-      console.error('[저장 실패]', e);
+      console.error(e);
       setStatus(`✕ 저장 실패: ${e.message}`, '#dc2626');
     } finally {
       if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '저장'; }
@@ -598,6 +602,7 @@ class CalendarApp {
 
   openSettings() {
     document.getElementById('input-token').value = this.storage.token;
+    this.updateFundUpdatedAt();
     document.getElementById('settings-overlay').classList.remove('hidden');
   }
 
@@ -611,7 +616,6 @@ class CalendarApp {
     localStorage.setItem('gh_token', token);
     this.closeSettings();
     showToast('설정이 저장되었습니다.', 'success');
-    // 토큰 바뀌면 캐시 초기화 후 재로드
     this.storage.cache = {};
     this.loadAndRender();
   }
