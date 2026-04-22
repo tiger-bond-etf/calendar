@@ -411,18 +411,35 @@ body {
   white-space: pre-wrap;
   word-break: break-all;
 }
-.btn-delete {
+/* 아이템 버튼 그룹 */
+.item-btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.btn-move, .btn-edit, .btn-delete {
   background: none;
   border: none;
-  color: #cbd5e1;
   cursor: pointer;
-  font-size: 14px;
-  padding: 2px;
+  font-size: 12px;
+  padding: 1px 3px;
   line-height: 1;
-  flex-shrink: 0;
-  transition: color 0.2s;
+  border-radius: 3px;
+  transition: background 0.15s, color 0.15s;
 }
-.btn-delete:hover { color: #ef4444; }
+.btn-move  { color: #94a3b8; }
+.btn-move:hover  { background: #e2e8f0; color: #475569; }
+.btn-edit  { color: #94a3b8; }
+.btn-edit:hover  { background: #dbeafe; color: #1d4ed8; }
+.btn-delete { color: #cbd5e1; }
+.btn-delete:hover { background: #fee2e2; color: #ef4444; }
+
+/* 수정 중인 아이템 강조 */
+.summary-item.editing {
+  border: 1.5px solid #3b82f6;
+  background: #eff6ff;
+}
 
 /* ===== Form ===== */
 .form-section {
