@@ -28,6 +28,15 @@
         "amount": "400억",
         "counterparty": "키움LP",
         "note": "ETN 교체"
+      },
+      {
+        "id": "mo9dgq0gkclb",
+        "fundCode": "490350",
+        "fundName": "머니마켓",
+        "cu": "500",
+        "amount": "500",
+        "counterparty": "dnfl",
+        "note": ""
       }
     ],
     "기타일정": [
