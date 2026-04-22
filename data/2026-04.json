@@ -113,5 +113,18 @@
         "note": ""
       }
     ]
+  },
+  "2026-04-21": {
+    "업무": [
+      {
+        "id": "mo9kri7w7evj",
+        "member": "류연지",
+        "fundCode": "490342",
+        "title": "전단채 매수",
+        "category": "매매",
+        "detail": "200억 매수 필요. 아니면 위반",
+        "checked": false
+      }
+    ]
   }
 }
