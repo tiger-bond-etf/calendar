@@ -115,16 +115,10 @@ body {
   border-radius: 3px;
   flex-shrink: 0;
 }
-.badge-리밸런싱 { background: #3b82f6; }
-.badge-롤오버   { background: #8b5cf6; }
-.badge-매매     { background: #ec4899; }
-.badge-스왑     { background: #14b8a6; }
-.badge-분배     { background: #059669; }
-.badge-상장     { background: #d97706; }
-.badge-기타     { background: #6b7280; }
-.badge-설정환매 { background: #dc2626; }
-.badge-일정     { background: #0891b2; }
-.badge-리소스   { background: #f97316; }
+.badge-일정     { background: #67e8f9; }
+.badge-업무     { background: #93c5fd; }
+.badge-설정환매 { background: #fca5a5; }
+.badge-리소스   { background: #fdba74; }
 
 /* ===== Calendar ===== */
 .calendar-wrap {
@@ -190,22 +184,17 @@ body {
   font-size: 10px;
   padding: 1px 5px;
   border-radius: 3px;
-  color: white;
+  color: #374151;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.5;
+  font-weight: 500;
 }
-.cell-event.cat-리밸런싱 { background: #3b82f6; }
-.cell-event.cat-롤오버   { background: #8b5cf6; }
-.cell-event.cat-매매     { background: #ec4899; }
-.cell-event.cat-스왑     { background: #14b8a6; }
-.cell-event.cat-분배     { background: #059669; }
-.cell-event.cat-상장     { background: #d97706; }
-.cell-event.cat-기타     { background: #6b7280; }
-.cell-event.cat-설정환매 { background: #dc2626; }
-.cell-event.cat-일정     { background: #0891b2; }
-.cell-event.cat-리소스   { background: #f97316; }
+.cell-event.cat-일정     { background: #e0f9ff; color: #0e7490; }
+.cell-event.cat-업무     { background: #dbeafe; color: #1e40af; }
+.cell-event.cat-설정환매 { background: #fee2e2; color: #b91c1c; }
+.cell-event.cat-리소스   { background: #ffedd5; color: #c2410c; }
 
 .cell-more {
   font-size: 10px;

@@ -31,15 +31,9 @@
 
       <!-- Legend -->
       <div class="legend">
-        <span class="legend-item"><span class="badge badge-리밸런싱"></span>리밸런싱</span>
-        <span class="legend-item"><span class="badge badge-롤오버"></span>롤오버</span>
-        <span class="legend-item"><span class="badge badge-매매"></span>매매</span>
-        <span class="legend-item"><span class="badge badge-스왑"></span>스왑</span>
-        <span class="legend-item"><span class="badge badge-분배"></span>분배</span>
-        <span class="legend-item"><span class="badge badge-상장"></span>상장</span>
-        <span class="legend-item"><span class="badge badge-기타"></span>기타</span>
-        <span class="legend-item"><span class="badge badge-설정환매"></span>설정환매</span>
         <span class="legend-item"><span class="badge badge-일정"></span>일정</span>
+        <span class="legend-item"><span class="badge badge-업무"></span>업무</span>
+        <span class="legend-item"><span class="badge badge-설정환매"></span>설정환매</span>
         <span class="legend-item"><span class="badge badge-리소스"></span>리소스</span>
       </div>
 
@@ -165,8 +159,12 @@
           <div class="form-grid form-grid-3">
             <input class="input" id="설환-코드" type="text" placeholder="펀드코드 (입력 후 Tab)">
             <input class="input" id="설환-펀드명" type="text" placeholder="펀드명 (자동입력)">
+            <select class="input" id="설환-type">
+              <option value="설정">설정</option>
+              <option value="환매">환매</option>
+            </select>
             <input class="input" id="설환-cu" type="number" placeholder="CU">
-            <input class="input" id="설환-금액" type="text" placeholder="금액 (자동계산)" readonly style="background:#f8fafc; color:#64748b;">
+            <input class="input" id="설환-금액" type="text" placeholder="금액 (억원, 자동계산)" readonly style="background:#f8fafc; color:#64748b;">
             <input class="input" id="설환-거래상대방" type="text" placeholder="거래상대방">
             <input class="input" id="설환-비고" type="text" placeholder="비고">
           </div>
@@ -190,7 +188,7 @@
             <div class="form-grid form-grid-3">
               <input class="input" id="리소스-res코드" type="text" placeholder="펀드코드 (Tab)">
               <input class="input" id="리소스-res펀드명" type="text" placeholder="펀드명 (자동입력)">
-              <input class="input" id="리소스-res금액" type="number" placeholder="금액(원)">
+              <input class="input" id="리소스-res금액" type="number" placeholder="금액(억원)">
             </div>
           </div>
           <div class="resource-sub-group">
@@ -198,7 +196,7 @@
             <div class="form-grid form-grid-3">
               <input class="input" id="리소스-set코드" type="text" placeholder="펀드코드 (Tab)">
               <input class="input" id="리소스-set펀드명" type="text" placeholder="펀드명 (자동입력)">
-              <input class="input" id="리소스-set금액" type="number" placeholder="금액(원)">
+              <input class="input" id="리소스-set금액" type="number" placeholder="금액(억원)">
             </div>
           </div>
           <div class="form-grid" style="margin-top:6px;">
