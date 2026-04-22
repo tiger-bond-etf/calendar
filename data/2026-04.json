@@ -29,6 +29,13 @@
         "counterparty": "키움LP",
         "note": "ETN 교체"
       }
+    ],
+    "기타일정": [
+      {
+        "id": "mo9dddym757x",
+        "title": "세미나 미팅",
+        "detail": "ㅇㅇㅇ"
+      }
     ]
   }
 }
