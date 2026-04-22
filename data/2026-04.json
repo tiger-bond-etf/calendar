@@ -1,0 +1,15 @@
+{
+  "2026-04-20": {
+    "설정환매": [
+      {
+        "id": "mo9iwo6wki7x",
+        "fundCode": "490350",
+        "fundName": "TIGER머니마켓액티브",
+        "cu": "400",
+        "amount": "409억원",
+        "counterparty": "키움증권LP",
+        "note": "ETN 교체"
+      }
+    ]
+  }
+}
