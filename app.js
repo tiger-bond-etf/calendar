@@ -511,35 +511,34 @@ class CalendarApp {
   // ---- Save ----
 
   async saveDay() {
-    const saveBtn = document.getElementById('btn-save');
     const statusEl = document.getElementById('save-status');
+    const saveBtn = document.getElementById('btn-save');
+
+    const setStatus = (msg, color) => {
+      statusEl.textContent = msg;
+      statusEl.style.color = color || '';
+    };
 
     if (!this.storage.token) {
-      statusEl.textContent = '⚠ 토큰 미설정 — 우측 상단 ⚙ 설정에서 GitHub 토큰을 입력해주세요.';
-      statusEl.style.color = '#dc2626';
+      setStatus('⚠ 설정에서 GitHub 토큰을 먼저 입력해주세요.', '#dc2626');
       return;
     }
 
-    saveBtn.disabled = true;
-    saveBtn.textContent = '저장 중...';
-    statusEl.textContent = '';
-    statusEl.style.color = '';
+    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '저장 중...'; }
+    setStatus('', '');
 
     try {
-      console.log('[저장 시작]', this.year, this.month, this.monthEntry?.data);
+      console.log('[저장 시작]', this.year, this.month);
       await this.storage.saveMonth(this.year, this.month, this.monthEntry.data);
       console.log('[저장 완료]');
-      statusEl.textContent = '✓ 저장되었습니다.';
-      statusEl.style.color = '#059669';
+      setStatus('✓ 저장되었습니다.', '#059669');
       this.renderCalendar();
-      setTimeout(() => { statusEl.textContent = ''; }, 3000);
+      setTimeout(() => setStatus('', ''), 3000);
     } catch (e) {
       console.error('[저장 실패]', e);
-      statusEl.textContent = `✕ 저장 실패: ${e.message}`;
-      statusEl.style.color = '#dc2626';
+      setStatus(`✕ 저장 실패: ${e.message}`, '#dc2626');
     } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = '저장';
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '저장'; }
     }
   }
 
