@@ -34,5 +34,36 @@
         "detail": ""
       }
     ]
+  },
+  "2026-05-20": {
+    "업무": [
+      {
+        "id": "mo9n06sdu09c",
+        "member": "류연지",
+        "fundCode": "490342",
+        "title": "ㅇㄹ",
+        "category": "리밸런싱",
+        "detail": "",
+        "checked": false
+      }
+    ]
+  },
+  "2026-05-22": {
+    "일정": [
+      {
+        "id": "mo9n0bhln9no",
+        "title": "ㅇㄹㅇㄹ",
+        "detail": ""
+      }
+    ]
+  },
+  "2026-05-08": {
+    "일정": [
+      {
+        "id": "mo9n0g7ikc9u",
+        "title": "ㅇㄹㅇㄹㄹ",
+        "detail": ""
+      }
+    ]
   }
 }
