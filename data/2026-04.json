@@ -95,6 +95,17 @@
         "title": "유니버스데이",
         "detail": ""
       }
+    ],
+    "업무": [
+      {
+        "id": "mo9sdi35ttme",
+        "member": "류연지",
+        "fundCode": "490238",
+        "title": "CD 스왑 청산",
+        "category": "스왑",
+        "detail": "KB PBS, KRYZTRSG2P04, 약 1030억 청산 / 리소스 확보 목적",
+        "checked": false
+      }
     ]
   }
 }
