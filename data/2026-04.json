@@ -12,5 +12,19 @@
         "note": ""
       }
     ]
+  },
+  "2026-04-20": {
+    "설정환매": [
+      {
+        "id": "mo9m1ioqwaqf",
+        "fundCode": "490350",
+        "fundName": "TIGER머니마켓액티브",
+        "type": "설정",
+        "cu": "400",
+        "amountRaw": 408.94,
+        "counterparty": "키움LP",
+        "note": ""
+      }
+    ]
   }
 }
