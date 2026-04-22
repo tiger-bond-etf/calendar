@@ -26,5 +26,21 @@
         "note": ""
       }
     ]
+  },
+  "2026-04-17": {
+    "리소스": [
+      {
+        "id": "mo9m2xmsho2j",
+        "summary": "키움  CD ETN 매수",
+        "category": "ETN",
+        "resFundCode": "490238",
+        "resFundName": "TIGER CD금리투자KIS(합성)",
+        "resAmountRaw": 1000,
+        "setFundCode": "490350",
+        "setFundName": "TIGER머니마켓액티브",
+        "setAmountRaw": 400,
+        "note": "레포 -> ETN 교체 / 레포는 20일에 종료"
+      }
+    ]
   }
 }
