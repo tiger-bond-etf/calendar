@@ -18,5 +18,24 @@
         "detail": "만기 이전에 롤오버 필요"
       }
     ]
+  },
+  "2026-04-17": {
+    "업무": [
+      {
+        "id": "mo9iy2onwnxr",
+        "member": "김시은",
+        "title": "달러선물 롤오버",
+        "category": "롤오버",
+        "detail": "휴가 주의",
+        "checked": false
+      }
+    ],
+    "일정": [
+      {
+        "id": "mo9iy8lx0efe",
+        "title": "시은 매니저 오후 반차",
+        "detail": ""
+      }
+    ]
   }
 }
