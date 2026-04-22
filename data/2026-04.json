@@ -47,5 +47,29 @@
         "detail": ""
       }
     ]
+  },
+  "2026-04-14": {
+    "설정환매": [
+      {
+        "id": "mo9kctc6jilf",
+        "fundCode": "490350",
+        "fundName": "TIGER머니마켓액티브",
+        "cu": "30",
+        "amount": "31억원",
+        "amountRaw": 3067027980,
+        "counterparty": "",
+        "note": ""
+      },
+      {
+        "id": "mo9kd3x8g4mc",
+        "fundCode": "490234",
+        "fundName": "TIGER 미국달러단기채권액티브",
+        "cu": "25",
+        "amount": "34억원",
+        "amountRaw": 3435328700,
+        "counterparty": "",
+        "note": ""
+      }
+    ]
   }
 }
