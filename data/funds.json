@@ -1,7 +1,909 @@
 {
   "updatedAt": "2026-04-22",
   "funds": {
-    "0043B0": { "name": "TIGER 머니마켓액티브", "navPerCU": 0 },
-    "0001S0": { "name": "TIGER CD금리투자KIS(합성)", "navPerCU": 0 }
+    "490102": {
+      "name": "TIGER 반도체",
+      "navPerCU": 2425295783
+    },
+    "490103": {
+      "name": "TIGER 은행",
+      "navPerCU": 336477464
+    },
+    "490107": {
+      "name": "TIGER 200",
+      "navPerCU": 4858351687
+    },
+    "490108": {
+      "name": "TIGER 라틴35",
+      "navPerCU": 739887785
+    },
+    "490110": {
+      "name": "TIGER 국채3년",
+      "navPerCU": 105204225
+    },
+    "490111": {
+      "name": "TIGER 차이나항셍25",
+      "navPerCU": 1103175691
+    },
+    "490113": {
+      "name": "TIGER 인버스",
+      "navPerCU": 156394459
+    },
+    "490114": {
+      "name": "TIGER 레버리지",
+      "navPerCU": 10808673576
+    },
+    "490115": {
+      "name": "TIGER 원유선물Enhanced(H)",
+      "navPerCU": 329366250
+    },
+    "490116": {
+      "name": "TIGER 미국나스닥100",
+      "navPerCU": 1731110329
+    },
+    "490117": {
+      "name": "TIGER 농산물선물Enhanced(H)",
+      "navPerCU": 529091577
+    },
+    "490119": {
+      "name": "TIGER 삼성그룹펀더멘털",
+      "navPerCU": 618206416
+    },
+    "490120": {
+      "name": "TIGER LG그룹+펀더멘털",
+      "navPerCU": 229954809
+    },
+    "490121": {
+      "name": "TIGER 현대차그룹+펀더멘털",
+      "navPerCU": 1268125081
+    },
+    "490122": {
+      "name": "TIGER 200 건설",
+      "navPerCU": 201872679
+    },
+    "490123": {
+      "name": "TIGER 200 중공업",
+      "navPerCU": 352168726
+    },
+    "490124": {
+      "name": "TIGER 200 철강소재",
+      "navPerCU": 306019175
+    },
+    "490125": {
+      "name": "TIGER 200 에너지화학",
+      "navPerCU": 381079614
+    },
+    "490126": {
+      "name": "TIGER 200 IT",
+      "navPerCU": 2121252839
+    },
+    "490127": {
+      "name": "TIGER 200 금융",
+      "navPerCU": 345073712
+    },
+    "490128": {
+      "name": "TIGER 경기방어",
+      "navPerCU": 278467612
+    },
+    "490129": {
+      "name": "TIGER 200 경기소비재",
+      "navPerCU": 565591154
+    },
+    "490132": {
+      "name": "TIGER 금은선물(H)",
+      "navPerCU": 1034671166
+    },
+    "490134": {
+      "name": "TIGER 미국S&P500선물(H)",
+      "navPerCU": 1812255051
+    },
+    "490135": {
+      "name": "TIGER 헬스케어",
+      "navPerCU": 961046363
+    },
+    "490136": {
+      "name": "TIGER 모멘텀",
+      "navPerCU": 1655689343
+    },
+    "490137": {
+      "name": "TIGER 중국소비테마",
+      "navPerCU": 238524774
+    },
+    "490139": {
+      "name": "TIGER 소프트웨어",
+      "navPerCU": 186725871
+    },
+    "490141": {
+      "name": "TIGER 증권",
+      "navPerCU": 395479283
+    },
+    "490143": {
+      "name": "TIGER 단기통안채",
+      "navPerCU": 111549042
+    },
+    "490144": {
+      "name": "TIGER 200커버드콜OTM",
+      "navPerCU": 2254719749
+    },
+    "490145": {
+      "name": "TIGER 구리실물",
+      "navPerCU": 398608751
+    },
+    "490147": {
+      "name": "TIGER 로우볼",
+      "navPerCU": 427899229
+    },
+    "490148": {
+      "name": "TIGER 미국MSCI리츠(합성 H)",
+      "navPerCU": 693261194
+    },
+    "490149": {
+      "name": "TIGER 차이나CSI300",
+      "navPerCU": 674778311
+    },
+    "490150": {
+      "name": "TIGER 단기선진하이일드(합성 H)",
+      "navPerCU": 692495270
+    },
+    "490151": {
+      "name": "TIGER 유로스탁스50(합성 H)",
+      "navPerCU": 1091825096
+    },
+    "490152": {
+      "name": "TIGER 일본TOPIX(합성 H)",
+      "navPerCU": 653073603
+    },
+    "490153": {
+      "name": "TIGER 미국나스닥바이오",
+      "navPerCU": 650576914
+    },
+    "490154": {
+      "name": "TIGER 차이나CSI300레버리지(합성)",
+      "navPerCU": 615021481
+    },
+    "490155": {
+      "name": "TIGER 코스피고배당",
+      "navPerCU": 797048173
+    },
+    "490156": {
+      "name": "TIGER 배당성장",
+      "navPerCU": 1152784054
+    },
+    "490157": {
+      "name": "TIGER 원유선물인버스(H)",
+      "navPerCU": 73158511
+    },
+    "490159": {
+      "name": "TIGER 차이나CSI300인버스(합성)",
+      "navPerCU": 259982451
+    },
+    "490160": {
+      "name": "TIGER 미국S&P500선물인버스(H)",
+      "navPerCU": 120682316
+    },
+    "490161": {
+      "name": "TIGER 미국S&P500레버리지(합성 H)",
+      "navPerCU": 1183473598
+    },
+    "490162": {
+      "name": "TIGER 유로스탁스레버리지(합성 H)",
+      "navPerCU": 736751247
+    },
+    "490163": {
+      "name": "TIGER 이머징마켓MSCI레버리지(합성 H)",
+      "navPerCU": 299482007
+    },
+    "490164": {
+      "name": "TIGER 200 헬스케어",
+      "navPerCU": 434550344
+    },
+    "490165": {
+      "name": "TIGER 200 산업재",
+      "navPerCU": 311057282
+    },
+    "490166": {
+      "name": "TIGER 200 생활소비재",
+      "navPerCU": 281566900
+    },
+    "490167": {
+      "name": "TIGER 우량가치",
+      "navPerCU": 699666250
+    },
+    "490168": {
+      "name": "TIGER 화장품",
+      "navPerCU": 116732840
+    },
+    "490169": {
+      "name": "TIGER 여행레저",
+      "navPerCU": 100105806
+    },
+    "490170": {
+      "name": "TIGER 미디어컨텐츠",
+      "navPerCU": 143238361
+    },
+    "490171": {
+      "name": "TIGER KTOP30",
+      "navPerCU": 876782129
+    },
+    "490172": {
+      "name": "TIGER 코스닥150",
+      "navPerCU": 407261510
+    },
+    "490173": {
+      "name": "TIGER 코스닥150 레버리지",
+      "navPerCU": 925926169
+    },
+    "490174": {
+      "name": "TIGER 경기방어채권혼합",
+      "navPerCU": 1056121760
+    },
+    "490175": {
+      "name": "TIGER 일본니케이225",
+      "navPerCU": 656437563
+    },
+    "490176": {
+      "name": "TIGER 인도니프티50레버리지(합성)",
+      "navPerCU": 695317410
+    },
+    "490177": {
+      "name": "TIGER 200IT레버리지",
+      "navPerCU": 7055238519
+    },
+    "490178": {
+      "name": "TIGER 200에너지화학레버리지",
+      "navPerCU": 280126217
+    },
+    "490179": {
+      "name": "TIGER 차이나HSCEI",
+      "navPerCU": 685783162
+    },
+    "490180": {
+      "name": "TIGER 미국다우존스30",
+      "navPerCU": 706806235
+    },
+    "490181": {
+      "name": "TIGER 유로스탁스배당30",
+      "navPerCU": 987271822
+    },
+    "490183": {
+      "name": "TIGER S&P글로벌헬스케어(합성)",
+      "navPerCU": 510503313
+    },
+    "490184": {
+      "name": "TIGER 코스닥150선물인버스",
+      "navPerCU": 100350566
+    },
+    "490185": {
+      "name": "TIGER 200동일가중",
+      "navPerCU": 1090204593
+    },
+    "490186": {
+      "name": "TIGER 200선물인버스2X",
+      "navPerCU": 19142855
+    },
+    "490188": {
+      "name": "TIGER 코스닥150IT",
+      "navPerCU": 562103933
+    },
+    "490189": {
+      "name": "TIGER 코스닥150바이오테크",
+      "navPerCU": 369316631
+    },
+    "490190": {
+      "name": "TIGER 미국달러선물레버리지",
+      "navPerCU": 1788110321
+    },
+    "490191": {
+      "name": "TIGER 미국달러선물인버스2X",
+      "navPerCU": 472951385
+    },
+    "490192": {
+      "name": "TIGER 우선주",
+      "navPerCU": 514668574
+    },
+    "490195": {
+      "name": "TIGER 200선물레버리지",
+      "navPerCU": 8280151345
+    },
+    "490196": {
+      "name": "TIGER S&P글로벌인프라(합성)",
+      "navPerCU": 944687274
+    },
+    "490197": {
+      "name": "TIGER 단기채권액티브",
+      "navPerCU": 113096504
+    },
+    "490198": {
+      "name": "TIGER 글로벌자원생산기업(합성 H)",
+      "navPerCU": 1043160208
+    },
+    "490199": {
+      "name": "TIGER 글로벌4차산업혁신기술(합성 H)",
+      "navPerCU": 445779880
+    },
+    "490200": {
+      "name": "TIGER 코스피",
+      "navPerCU": 3343178082
+    },
+    "490202": {
+      "name": "TIGER 코스피대형주",
+      "navPerCU": 1715199058
+    },
+    "490203": {
+      "name": "TIGER 코스피중형주",
+      "navPerCU": 1248259109
+    },
+    "490204": {
+      "name": "TIGER MSCI KOREA ESG유니버설",
+      "navPerCU": 875947103
+    },
+    "490205": {
+      "name": "TIGER MSCI KOREA ESG리더스",
+      "navPerCU": 732700625
+    },
+    "490206": {
+      "name": "TIGER 200커버드콜",
+      "navPerCU": 1144907848
+    },
+    "490207": {
+      "name": "TIGER KRX300",
+      "navPerCU": 4416259155
+    },
+    "490213": {
+      "name": "TIGER 코리아TOP10",
+      "navPerCU": 1701897227
+    },
+    "490214": {
+      "name": "TIGER 일본엔선물",
+      "navPerCU": 855956918
+    },
+    "490220": {
+      "name": "TIGER 중장기국채",
+      "navPerCU": 1020442765
+    },
+    "490223": {
+      "name": "TIGER K게임",
+      "navPerCU": 335242740
+    },
+    "490224": {
+      "name": "TIGER 미국채10년선물",
+      "navPerCU": 1336200156
+    },
+    "490225": {
+      "name": "TIGER 2차전지테마",
+      "navPerCU": 1302879947
+    },
+    "490228": {
+      "name": "TIGER 의료기기",
+      "navPerCU": 909056005
+    },
+    "490229": {
+      "name": "TIGER 지주회사",
+      "navPerCU": 1127824441
+    },
+    "490230": {
+      "name": "TIGER 200TR",
+      "navPerCU": 5654908223
+    },
+    "490231": {
+      "name": "TIGER MSCI Korea TR",
+      "navPerCU": 4246659866
+    },
+    "490232": {
+      "name": "TIGER 200커뮤니케이션서비스",
+      "navPerCU": 462636340
+    },
+    "490233": {
+      "name": "TIGER 골드선물(H)",
+      "navPerCU": 1437918567
+    },
+    "490234": {
+      "name": "TIGER 미국달러단기채권액티브",
+      "navPerCU": 137413148
+    },
+    "490235": {
+      "name": "TIGER 리츠부동산인프라",
+      "navPerCU": 242983293
+    },
+    "490237": {
+      "name": "TIGER리츠부동산인프라채권",
+      "navPerCU": 260725575
+    },
+    "490238": {
+      "name": "TIGER CD금리투자KIS(합성)",
+      "navPerCU": 114744085
+    },
+    "490239": {
+      "name": "TIGER 미국S&P500",
+      "navPerCU": 1296706267
+    },
+    "490240": {
+      "name": "TIGER AI코리아그로스액티브",
+      "navPerCU": 3266273488
+    },
+    "490241": {
+      "name": "TIGER BBIG",
+      "navPerCU": 395769847
+    },
+    "490242": {
+      "name": "TIGER 바이오 TOP10",
+      "navPerCU": 414294871
+    },
+    "490243": {
+      "name": "TIGER 2차전지 TOP10",
+      "navPerCU": 675553377
+    },
+    "490244": {
+      "name": "TIGER 게임 TOP10",
+      "navPerCU": 288373005
+    },
+    "490245": {
+      "name": "TIGER 인터넷TOP10",
+      "navPerCU": 244310015
+    },
+    "490246": {
+      "name": "TIGER차이나바이오테크SOLACTIVE",
+      "navPerCU": 362270123
+    },
+    "490247": {
+      "name": "TIGER차이나전기차SOLACTIVE",
+      "navPerCU": 563755675
+    },
+    "490248": {
+      "name": "TIGER글로벌클라우드컴퓨팅INDXX",
+      "navPerCU": 424303321
+    },
+    "490249": {
+      "name": "TIGER 차이나항셍테크",
+      "navPerCU": 409495867
+    },
+    "490250": {
+      "name": "TIGER 탄소효율그린뉴딜",
+      "navPerCU": 2245612519
+    },
+    "490251": {
+      "name": "TIGER Fn신재생에너지",
+      "navPerCU": 1504791765
+    },
+    "490252": {
+      "name": "TIGER 미국필라델피아반도체나스닥",
+      "navPerCU": 1845724103
+    },
+    "490253": {
+      "name": "TIGER 미국테크 TOP10INDXX",
+      "navPerCU": 1577705859
+    },
+    "490254": {
+      "name": "TIGER 글로벌이노베이션액티브",
+      "navPerCU": 237729744
+    },
+    "490255": {
+      "name": "TIGER 퓨처모빌리티액티브",
+      "navPerCU": 135338780
+    },
+    "490256": {
+      "name": "TIGER 글로벌리튬&2차전지SOLACTIVE(합성)",
+      "navPerCU": 535541254
+    },
+    "490257": {
+      "name": "TIGER 글로벌자율주행&전기차SOLACTIVE",
+      "navPerCU": 702597467
+    },
+    "490258": {
+      "name": "TIGER 차이나반도체FACTSET",
+      "navPerCU": 457053704
+    },
+    "490259": {
+      "name": "TIGER 차이나클린에너지SOLACTIVE",
+      "navPerCU": 369679665
+    },
+    "490260": {
+      "name": "TIGER 반도체TOP10",
+      "navPerCU": 1869467688
+    },
+    "490261": {
+      "name": "TIGER Fn메타버스",
+      "navPerCU": 419465835
+    },
+    "490262": {
+      "name": "TIGER KRX기후변화솔루션",
+      "navPerCU": 1261772969
+    },
+    "490263": {
+      "name": "TIGER 차이나과창판STAR50(합성)",
+      "navPerCU": 645762731
+    },
+    "490264": {
+      "name": "TIGER글로벌AI플랫폼액티브",
+      "navPerCU": 124886242
+    },
+    "490265": {
+      "name": "TIGER BBIG 레버리지",
+      "navPerCU": 140563929
+    },
+    "490266": {
+      "name": "TIGER 2차전지TOP10 레버리지",
+      "navPerCU": 131313242
+    },
+    "490267": {
+      "name": "TIGER 글로벌AI사이버보안INDXX",
+      "navPerCU": 474397684
+    },
+    "490268": {
+      "name": "TIGER 미국나스닥100레버리지(합성)",
+      "navPerCU": 1900857273
+    },
+    "490269": {
+      "name": "TIGER KEDI혁신기업ESG30",
+      "navPerCU": 1000814755
+    },
+    "490270": {
+      "name": "TIGER필라델피아반도체레버리지(합성)",
+      "navPerCU": 720004147
+    },
+    "490271": {
+      "name": "TIGER 미국S&P500배당귀족",
+      "navPerCU": 678422693
+    },
+    "490272": {
+      "name": "TIGER 미국나스닥넥스트100",
+      "navPerCU": 952999014
+    },
+    "490273": {
+      "name": "TIGER 미국나스닥100채권혼합50",
+      "navPerCU": 694444272
+    },
+    "490274": {
+      "name": "TIGER차이나항셍테크레버리지(합성)",
+      "navPerCU": 66809163
+    },
+    "490275": {
+      "name": "TIGER 글로벌멀티에셋TIF액티브",
+      "navPerCU": 631058865
+    },
+    "490276": {
+      "name": "TIGER 미국나스닥100커버드콜(합성)",
+      "navPerCU": 563922628
+    },
+    "490277": {
+      "name": "TIGER우량회사채액티브",
+      "navPerCU": 115450597
+    },
+    "490279": {
+      "name": "TIGER 테슬라채권혼합Fn",
+      "navPerCU": 729664511
+    },
+    "490280": {
+      "name": "TIGER MKF배당귀족",
+      "navPerCU": 1109607681
+    },
+    "490281": {
+      "name": "TIGER미국나스닥100(H)",
+      "navPerCU": 1040992098
+    },
+    "490282": {
+      "name": "TIGER미국S&P500(H)",
+      "navPerCU": 829887999
+    },
+    "490285": {
+      "name": "TIGER 한중전기차(합성)",
+      "navPerCU": 141220321
+    },
+    "490286": {
+      "name": "TIGER 한중반도체(합성)",
+      "navPerCU": 403538863
+    },
+    "490287": {
+      "name": "TIGERKOFR금리액티브(합성)",
+      "navPerCU": 110684408
+    },
+    "490289": {
+      "name": "TIGER국고채30년스트립액티브",
+      "navPerCU": 95961559
+    },
+    "490290": {
+      "name": "TIGER종합채권(AA-이상)액티브",
+      "navPerCU": 109390365
+    },
+    "490291": {
+      "name": "TIGERTSMC파운드리밸류체인",
+      "navPerCU": 1555636863
+    },
+    "490292": {
+      "name": "TIGER인도니프티50",
+      "navPerCU": 639772802
+    },
+    "490295": {
+      "name": "TIGER 차이나전기차레버리지(합성)",
+      "navPerCU": 118879758
+    },
+    "490296": {
+      "name": "TIGER미국달러SOFR금리액티브(합성)",
+      "navPerCU": 125776677
+    },
+    "490297": {
+      "name": "TIGER미국30년국채스트립액티브(합성 H)",
+      "navPerCU": 74819406
+    },
+    "490298": {
+      "name": "TIGER미국투자등급회사채액티브(H)",
+      "navPerCU": 96555876
+    },
+    "490300": {
+      "name": "TIGER 미국배당다우존스",
+      "navPerCU": 723956743
+    },
+    "490301": {
+      "name": "TIGER 미국배당다우존스타겟커버드콜1호",
+      "navPerCU": 636326281
+    },
+    "490302": {
+      "name": "TIGER 미국배당다우존스타겟커버드콜2호",
+      "navPerCU": 549143297
+    },
+    "490303": {
+      "name": "TIGER 글로벌AI&로보틱스INDXX",
+      "navPerCU": 775065026
+    },
+    "490304": {
+      "name": "TIGER 글로벌혁신블루칩TOP10",
+      "navPerCU": 1033827550
+    },
+    "490305": {
+      "name": "TIGER 코스닥글로벌",
+      "navPerCU": 1008102293
+    },
+    "490306": {
+      "name": "TIGER 2차전지소재Fn",
+      "navPerCU": 391263461
+    },
+    "490307": {
+      "name": "TIGER K방산&우주",
+      "navPerCU": 2480363548
+    },
+    "490308": {
+      "name": "TIGER일본반도체FACTSET",
+      "navPerCU": 1171172124
+    },
+    "490309": {
+      "name": "TIGER미국캐시카우100",
+      "navPerCU": 759810172
+    },
+    "490310": {
+      "name": "TIGER 글로벌AI액티브",
+      "navPerCU": 299029035
+    },
+    "490311": {
+      "name": "TIGER 은행고배당플러스TOP10",
+      "navPerCU": 1344176018
+    },
+    "490313": {
+      "name": "TIGER미국테크TOP10INDXX(H)",
+      "navPerCU": 911051830
+    },
+    "490314": {
+      "name": "TIGER미국테크TOP10채권혼합",
+      "navPerCU": 706689582
+    },
+    "490315": {
+      "name": "TIGER AI반도체핵심공정",
+      "navPerCU": 1026536617
+    },
+    "490316": {
+      "name": "TIGER 코리아테크액티브",
+      "navPerCU": 312556299
+    },
+    "490317": {
+      "name": "TIGER 미국테크TOP10타겟커버드콜",
+      "navPerCU": 790896220
+    },
+    "490318": {
+      "name": "TIGER 배당커버드콜액티브",
+      "navPerCU": 198923197
+    },
+    "490319": {
+      "name": "TIGER 글로벌비만치료제TOP2 Plus INDXX",
+      "navPerCU": 501380205
+    },
+    "490320": {
+      "name": "TIGER 미국30년국채커버드콜액티브(H)",
+      "navPerCU": 370893044
+    },
+    "490321": {
+      "name": "TIGERCD1년금리액티브(합성)",
+      "navPerCU": 106413614
+    },
+    "490322": {
+      "name": "TIGER 글로벌온디바이스AI",
+      "navPerCU": 781535485
+    },
+    "490323": {
+      "name": "TIGER 인도빌리언컨슈머",
+      "navPerCU": 517398068
+    },
+    "490324": {
+      "name": "TIGER 미국S&P500타겟데일리커버드콜",
+      "navPerCU": 603327339
+    },
+    "490325": {
+      "name": "TIGER 미국나스닥100ETF선물",
+      "navPerCU": 662347326
+    },
+    "490326": {
+      "name": "TIGER 27-04회사채(A+이상)액티브",
+      "navPerCU": 106803281
+    },
+    "490327": {
+      "name": "TIGER 미국나스닥100타겟데일리커버드콜",
+      "navPerCU": 539251464
+    },
+    "490328": {
+      "name": "TIGER미국S&P500동일가중",
+      "navPerCU": 633065155
+    },
+    "490329": {
+      "name": "TIGER미국AI빅테크10",
+      "navPerCU": 785859239
+    },
+    "490331": {
+      "name": "TIGER 반도체TOP10레버리지",
+      "navPerCU": 2589936697
+    },
+    "490332": {
+      "name": "TIGER 미국AI반도체팹리스",
+      "navPerCU": 877432249
+    },
+    "490333": {
+      "name": "TIGER글로벌AI전력인프라액티브",
+      "navPerCU": 281892741
+    },
+    "490334": {
+      "name": "TIGER 미국방산TOP10",
+      "navPerCU": 722306565
+    },
+    "490335": {
+      "name": "TIGER미국AI빅테크10타겟데일리커버드콜",
+      "navPerCU": 599854381
+    },
+    "490336": {
+      "name": "TIGER 조선TOP10",
+      "navPerCU": 1500862254
+    },
+    "490337": {
+      "name": "TIGER 미국필라델피아 AI 반도체나스닥",
+      "navPerCU": 972726279
+    },
+    "490339": {
+      "name": "TIGER 코리아밸류업",
+      "navPerCU": 1429681934
+    },
+    "490340": {
+      "name": "TIGER 엔비디아미국채커버드콜밸런스(합성)",
+      "navPerCU": 503874761
+    },
+    "490341": {
+      "name": "TIGER 미국배당다우존스타겟데일리커버드콜",
+      "navPerCU": 496077754
+    },
+    "490342": {
+      "name": "TIGERCD금리플러스액티브(합성)",
+      "navPerCU": 100163615
+    },
+    "490343": {
+      "name": "TIGER 26-04 회사채(A+이상)액티브",
+      "navPerCU": 102589365
+    },
+    "490344": {
+      "name": "TIGER 미국소비트렌드액티브",
+      "navPerCU": 77665024
+    },
+    "490345": {
+      "name": "TIGER 적격TDF2045",
+      "navPerCU": 594330199
+    },
+    "490347": {
+      "name": "TIGER차이나AI소프트웨어",
+      "navPerCU": 665123960
+    },
+    "490348": {
+      "name": "TIGER차이나테크TOP10",
+      "navPerCU": 666409474
+    },
+    "490349": {
+      "name": "TIGER미국초단기(3개월이하)국채",
+      "navPerCU": 101696408
+    },
+    "490350": {
+      "name": "TIGER머니마켓액티브",
+      "navPerCU": 102234266
+    },
+    "490351": {
+      "name": "TIGER차이나휴머노이드로봇",
+      "navPerCU": 634681206
+    },
+    "490353": {
+      "name": "TIGER차이나글로벌리더스TOP3+",
+      "navPerCU": 570711662
+    },
+    "490354": {
+      "name": "TIGER토탈월드스탁액티브",
+      "navPerCU": 1272898967
+    },
+    "490355": {
+      "name": "TIGER코리아배당다우존스",
+      "navPerCU": 827308486
+    },
+    "490356": {
+      "name": "TIGER KRX금현물",
+      "navPerCU": 753633084
+    },
+    "490357": {
+      "name": "TIGER 리츠부동산인프라TOP10액티브",
+      "navPerCU": 579729448
+    },
+    "490358": {
+      "name": "TIGER 리츠부동산인프라10채권혼합액티브",
+      "navPerCU": 535025988
+    },
+    "490359": {
+      "name": "TIGER미국AI소프트웨어TOP4Plus",
+      "navPerCU": 399518873
+    },
+    "490360": {
+      "name": "TIGER 코리아원자력",
+      "navPerCU": 1300767795
+    },
+    "490361": {
+      "name": "TIGER28-04 회사채(A+이상)액티브",
+      "navPerCU": 99153775
+    },
+    "490362": {
+      "name": "TIGER 미국AI전력SMR",
+      "navPerCU": 410114345
+    },
+    "490363": {
+      "name": "TIGER200타겟위클리커버드콜",
+      "navPerCU": 1917436468
+    },
+    "490364": {
+      "name": "TIGER코리아배당다우존스위클리커버드콜",
+      "navPerCU": 1222129479
+    },
+    "490365": {
+      "name": "TIGER차이나증권",
+      "navPerCU": 454377821
+    },
+    "490366": {
+      "name": "TIGER 코리아AI전력기기TOP3플러스",
+      "navPerCU": 1014166889
+    },
+    "490367": {
+      "name": "TIGER 미국AI데이터센터TOP4Plus",
+      "navPerCU": 582851328
+    },
+    "490368": {
+      "name": "TIGER12월자동연장금융채(AA-이상)액티브",
+      "navPerCU": 101056450
+    },
+    "490370": {
+      "name": "TIGER코리아휴머노이드로봇산업",
+      "navPerCU": 595693449
+    },
+    "490371": {
+      "name": "TIGER미국우주테크",
+      "navPerCU": 548802372
+    },
+    "490373": {
+      "name": "TIGER기술이전바이오액티브",
+      "navPerCU": 95336385
+    },
+    "490374": {
+      "name": "TIGER반도체TOP10커버드콜액티브",
+      "navPerCU": 1070495198
+    },
+    "490375": {
+      "name": "TIGER 은액티브",
+      "navPerCU": 500000000
+    }
   }
 }
