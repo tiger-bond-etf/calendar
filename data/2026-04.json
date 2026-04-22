@@ -25,6 +25,17 @@
         "counterparty": "키움LP",
         "note": ""
       }
+    ],
+    "업무": [
+      {
+        "id": "mo9m6doy0omu",
+        "member": "류연지",
+        "fundCode": "490342",
+        "title": "전단채 200억 매수",
+        "category": "매매",
+        "detail": "매수 안하면 위반..",
+        "checked": false
+      }
     ]
   },
   "2026-04-17": {
