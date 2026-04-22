@@ -10,6 +10,13 @@
         "counterparty": "키움증권LP",
         "note": "ETN 교체"
       }
+    ],
+    "일정": [
+      {
+        "id": "mo9ixifxdcye",
+        "title": "달러선물 만기",
+        "detail": "만기 이전에 롤오버 필요"
+      }
     ]
   }
 }
