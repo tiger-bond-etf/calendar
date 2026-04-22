@@ -7,6 +7,7 @@ const CONFIG = {
   repo:  'calendar',
 };
 
+// 업무 분류 색상
 const CAT_COLOR = {
   '리밸런싱': '#3b82f6',
   '롤오버':   '#8b5cf6',
@@ -15,6 +16,13 @@ const CAT_COLOR = {
   '분배':     '#059669',
   '상장':     '#d97706',
   '기타':     '#6b7280',
+};
+
+// 탭별 캘린더 셀 색상
+const TAB_COLOR = {
+  '설정환매': '#dc2626',
+  '일정':     '#0891b2',
+  '리소스':   '#f97316',
 };
 
 // ===================== GitHub Storage =====================
@@ -101,7 +109,6 @@ class GitHubStorage {
       const res = await fetch(url, { headers: this.headers });
       if (!res.ok) return [];
       const files = await res.json();
-      // funds.json 제외, YYYY-MM.json 만
       return files.filter(f => f.name !== 'funds.json' && f.name.endsWith('.json'));
     } catch (e) {
       return [];
@@ -119,7 +126,6 @@ class GitHubStorage {
   }
 
   async loadFundData() {
-    // public raw URL — no token needed
     const url = `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/data/funds.json?t=${Date.now()}`;
     try {
       const res = await fetch(url);
@@ -128,6 +134,29 @@ class GitHubStorage {
     } catch (e) {
       return null;
     }
+  }
+
+  // 여러 달 데이터를 합쳐서 반환
+  async loadRange(fromDate, toDate) {
+    const from = new Date(fromDate + 'T00:00:00');
+    const to   = new Date(toDate   + 'T00:00:00');
+    const result = {};
+
+    let cur = new Date(from.getFullYear(), from.getMonth(), 1);
+    const endMonth = new Date(to.getFullYear(), to.getMonth(), 1);
+
+    while (cur <= endMonth) {
+      const y = cur.getFullYear();
+      const m = cur.getMonth() + 1;
+      const entry = await this.loadMonth(y, m);
+      for (const [dateStr, dayData] of Object.entries(entry.data || {})) {
+        if (dateStr >= fromDate && dateStr <= toDate) {
+          result[dateStr] = dayData;
+        }
+      }
+      cur.setMonth(cur.getMonth() + 1);
+    }
+    return result;
   }
 }
 
@@ -175,8 +204,13 @@ class CalendarApp {
     this.monthEntry = null;
     this.openDate   = null;
     this.activeTab  = '일정';
-    this.fundData   = null;       // { funds: { code: { name, navPerCU } }, updatedAt }
-    this.curNavPerCU = 0;         // navPerCU for currently entered fund code
+    this.fundData   = null;
+    this.curNavPerCU = 0;
+
+    // List panel state
+    this.listCat      = '전체';
+    this.listData     = {};   // { dateStr: dayData } — currently displayed
+    this.listUsingRange = false;
   }
 
   async init() {
@@ -199,33 +233,56 @@ class CalendarApp {
     document.getElementById('settings-overlay').addEventListener('click', e => {
       if (e.target === e.currentTarget) this.closeSettings();
     });
+
+    // 모달 탭
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => this.switchTab(btn.dataset.tab));
     });
 
-    // 펀드코드 자동완성
-    document.getElementById('설환-코드').addEventListener('blur', () => this.onFundCodeBlur());
-
-    // CU 자동계산
+    // 설정환매 펀드코드 자동완성
+    document.getElementById('설환-코드').addEventListener('blur', () => this.onFundCodeBlur('설환'));
     document.getElementById('설환-cu').addEventListener('input', () => this.calcAmount());
+
+    // 리소스 펀드코드 자동완성
+    document.getElementById('리소스-res코드').addEventListener('blur', () => this.onFundCodeBlur('리소스-res'));
+    document.getElementById('리소스-set코드').addEventListener('blur', () => this.onFundCodeBlur('리소스-set'));
 
     // Excel 파일 선택
     document.getElementById('fund-file-input').addEventListener('change', e => {
       if (e.target.files[0]) this.handleFundUpdate(e.target.files[0]);
       e.target.value = '';
     });
+
+    // 목록 패널 카테고리 탭
+    document.querySelectorAll('.list-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => this.switchListCat(btn.dataset.cat));
+    });
   }
 
   // ---- Fund auto-fill ----
 
-  onFundCodeBlur() {
-    const code = document.getElementById('설환-코드').value.trim();
+  onFundCodeBlur(prefix) {
+    let codeEl, nameEl;
+    if (prefix === '설환') {
+      codeEl = document.getElementById('설환-코드');
+      nameEl = document.getElementById('설환-펀드명');
+    } else if (prefix === '리소스-res') {
+      codeEl = document.getElementById('리소스-res코드');
+      nameEl = document.getElementById('리소스-res펀드명');
+    } else if (prefix === '리소스-set') {
+      codeEl = document.getElementById('리소스-set코드');
+      nameEl = document.getElementById('리소스-set펀드명');
+    }
+    if (!codeEl || !nameEl) return;
+    const code = codeEl.value.trim();
     if (!code || !this.fundData?.funds) return;
     const fund = this.fundData.funds[code];
     if (fund) {
-      document.getElementById('설환-펀드명').value = fund.name;
-      this.curNavPerCU = fund.navPerCU || 0;
-      this.calcAmount();
+      nameEl.value = fund.name;
+      if (prefix === '설환') {
+        this.curNavPerCU = fund.navPerCU || 0;
+        this.calcAmount();
+      }
     }
   }
 
@@ -250,13 +307,12 @@ class CalendarApp {
       const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
 
       const funds = {};
-      // 1행 = 헤더, 2행부터 데이터
       // D열(index 3)=펀드코드, E열(index 4)=펀드명, J열(index 9)=CU순자산총액
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
-        const c = String(row[3] || '').trim();   // D열: 펀드코드
-        const n = String(row[4] || '').trim();   // E열: 펀드명
-        const v = Number(row[9]) || 0;            // J열: CU순자산총액
+        const c = String(row[3] || '').trim();
+        const n = String(row[4] || '').trim();
+        const v = Number(row[9]) || 0;
         if (c && n) {
           funds[c] = { name: n, navPerCU: v };
         }
@@ -292,6 +348,11 @@ class CalendarApp {
     document.getElementById('month-title').textContent = `${this.year}년 ${this.month}월`;
     this.monthEntry = await this.storage.loadMonth(this.year, this.month);
     this.renderCalendar();
+    // 날짜 범위 미설정 상태면 현재 달 데이터로 목록 패널 갱신
+    if (!this.listUsingRange) {
+      this.listData = this.monthEntry?.data || {};
+      this.renderListPanel();
+    }
   }
 
   // ---- Calendar ----
@@ -357,6 +418,8 @@ class CalendarApp {
       events.push({ cat: item.category || '기타', label: item.title || '' }));
     (dayData['설정환매'] || []).forEach(item =>
       events.push({ cat: '설정환매', label: item.fundName || item.fundCode || '설정/환매' }));
+    (dayData['리소스'] || []).forEach(item =>
+      events.push({ cat: '리소스', label: item.summary || item.category || '리소스' }));
     return events;
   }
 
@@ -396,7 +459,7 @@ class CalendarApp {
     this.monthEntry.data[this.openDate] = dayData;
   }
 
-  // ---- Summary ----
+  // ---- Summary (모달 상단) ----
 
   renderSummary() {
     const el = document.getElementById('summary-section');
@@ -404,9 +467,10 @@ class CalendarApp {
     el.innerHTML = '';
 
     const sections = [
-      { key: '일정',    label: '일정',          cls: 'label-일정' },
-      { key: '업무',    label: '업무',          cls: '' },
-      { key: '설정환매', label: '설정환매',      cls: 'label-설정환매' },
+      { key: '일정',    label: '일정',    cls: 'label-일정' },
+      { key: '업무',    label: '업무',    cls: '' },
+      { key: '설정환매', label: '설정환매', cls: 'label-설정환매' },
+      { key: '리소스',  label: '리소스',  cls: 'label-리소스' },
     ];
 
     let hasAny = false;
@@ -485,6 +549,12 @@ class CalendarApp {
         span.textContent = item.member;
         meta.appendChild(span);
       }
+      if (item.fundCode) {
+        const span = document.createElement('span');
+        span.textContent = item.fundCode;
+        span.style.color = '#0891b2';
+        meta.appendChild(span);
+      }
       if (item.category) {
         const badge = document.createElement('span');
         badge.className = 'item-badge';
@@ -509,13 +579,59 @@ class CalendarApp {
       const meta = document.createElement('div');
       meta.className = 'item-meta';
       const parts = [];
-      if (item.fundCode) parts.push(`코드: ${item.fundCode}`);
-      if (item.cu)       parts.push(`CU: ${item.cu}`);
-      if (item.amount)   parts.push(`금액: ${item.amount}`);
+      if (item.fundCode)     parts.push(`코드: ${item.fundCode}`);
+      if (item.cu)           parts.push(`CU: ${item.cu}`);
+      if (item.amount)       parts.push(`금액: ${item.amount}`);
       if (item.counterparty) parts.push(`거래처: ${item.counterparty}`);
-      if (item.note)     parts.push(`비고: ${item.note}`);
+      if (item.note)         parts.push(`비고: ${item.note}`);
       meta.textContent = parts.join('  |  ');
       frag.appendChild(meta);
+
+    } else if (tab === '리소스') {
+      const title = document.createElement('div');
+      title.className = 'item-title';
+      title.textContent = item.summary || '-';
+      frag.appendChild(title);
+
+      const meta = document.createElement('div');
+      meta.className = 'item-meta';
+      if (item.category) {
+        const badge = document.createElement('span');
+        badge.className = 'item-badge';
+        badge.style.background = '#f97316';
+        badge.textContent = item.category;
+        meta.appendChild(badge);
+      }
+      frag.appendChild(meta);
+
+      // 리소스 sub-row
+      if (item.resFundCode || item.resFundName || item.resAmount) {
+        const row = document.createElement('div');
+        row.className = 'item-detail';
+        const parts = ['[리소스]'];
+        if (item.resFundCode) parts.push(item.resFundCode);
+        if (item.resFundName) parts.push(item.resFundName);
+        if (item.resAmountRaw) parts.push(formatAmount(item.resAmountRaw));
+        row.textContent = parts.join(' ');
+        frag.appendChild(row);
+      }
+      // 설정 sub-row
+      if (item.setFundCode || item.setFundName || item.setAmountRaw) {
+        const row = document.createElement('div');
+        row.className = 'item-detail';
+        const parts = ['[설정]'];
+        if (item.setFundCode) parts.push(item.setFundCode);
+        if (item.setFundName) parts.push(item.setFundName);
+        if (item.setAmountRaw) parts.push(formatAmount(item.setAmountRaw));
+        row.textContent = parts.join(' ');
+        frag.appendChild(row);
+      }
+      if (item.note) {
+        const det = document.createElement('div');
+        det.className = 'item-detail';
+        det.textContent = `비고: ${item.note}`;
+        frag.appendChild(det);
+      }
     }
 
     return frag;
@@ -539,12 +655,14 @@ class CalendarApp {
 
     } else if (tab === '업무') {
       const member   = document.getElementById('업무-본부원명').value;
+      const fundCode = document.getElementById('업무-펀드코드').value.trim();
       const title    = document.getElementById('업무-제목').value.trim();
       const category = document.getElementById('업무-분류').value;
       const detail   = document.getElementById('업무-상세').value.trim();
       if (!title) { showToast('제목을 입력해주세요.', 'error'); return; }
-      item = { ...item, member, title, category, detail, checked: false };
+      item = { ...item, member, fundCode, title, category, detail, checked: false };
       document.getElementById('업무-본부원명').value = '';
+      document.getElementById('업무-펀드코드').value = '';
       document.getElementById('업무-제목').value    = '';
       document.getElementById('업무-분류').value    = '';
       document.getElementById('업무-상세').value    = '';
@@ -553,14 +671,33 @@ class CalendarApp {
       const fundCode     = document.getElementById('설환-코드').value.trim();
       const fundName     = document.getElementById('설환-펀드명').value.trim();
       const cu           = document.getElementById('설환-cu').value.trim();
+      const amountRaw    = parseFloat(document.getElementById('설환-cu').value) * this.curNavPerCU || 0;
       const amount       = document.getElementById('설환-금액').value.trim();
       const counterparty = document.getElementById('설환-거래상대방').value.trim();
       const note         = document.getElementById('설환-비고').value.trim();
       if (!fundCode && !fundName) { showToast('펀드코드 또는 펀드명을 입력해주세요.', 'error'); return; }
-      item = { ...item, fundCode, fundName, cu, amount, counterparty, note };
+      item = { ...item, fundCode, fundName, cu, amount, amountRaw, counterparty, note };
       ['설환-코드','설환-펀드명','설환-cu','설환-금액','설환-거래상대방','설환-비고'].forEach(id =>
         document.getElementById(id).value = '');
       this.curNavPerCU = 0;
+
+    } else if (tab === '리소스') {
+      const summary    = document.getElementById('리소스-요약').value.trim();
+      const category   = document.getElementById('리소스-분류').value;
+      const resFundCode = document.getElementById('리소스-res코드').value.trim();
+      const resFundName = document.getElementById('리소스-res펀드명').value.trim();
+      const resAmountRaw = parseFloat(document.getElementById('리소스-res금액').value) || 0;
+      const setFundCode = document.getElementById('리소스-set코드').value.trim();
+      const setFundName = document.getElementById('리소스-set펀드명').value.trim();
+      const setAmountRaw = parseFloat(document.getElementById('리소스-set금액').value) || 0;
+      const note       = document.getElementById('리소스-비고').value.trim();
+      if (!summary && !category) { showToast('요약 또는 분류를 입력해주세요.', 'error'); return; }
+      item = { ...item, summary, category, resFundCode, resFundName, resAmountRaw,
+               setFundCode, setFundName, setAmountRaw, note };
+      ['리소스-요약','리소스-res코드','리소스-res펀드명','리소스-res금액',
+       '리소스-set코드','리소스-set펀드명','리소스-set금액','리소스-비고'].forEach(id =>
+        document.getElementById(id).value = '');
+      document.getElementById('리소스-분류').value = '';
     }
 
     dayData[tab].push(item);
@@ -580,8 +717,7 @@ class CalendarApp {
 
   toggleCheck(id) {
     const dayData = this.getDayData();
-    const items = dayData['업무'] || [];
-    const item = items.find(i => i.id === id);
+    const item = (dayData['업무'] || []).find(i => i.id === id);
     if (item) {
       item.checked = !item.checked;
       this.setDayData(dayData);
@@ -613,6 +749,11 @@ class CalendarApp {
       await this.storage.saveMonth(this.year, this.month, this.monthEntry.data);
       setStatus('✓ 저장되었습니다.', '#059669');
       this.renderCalendar();
+      // 현재 달 목록도 갱신
+      if (!this.listUsingRange) {
+        this.listData = this.monthEntry.data;
+        this.renderListPanel();
+      }
       setTimeout(() => setStatus('', ''), 3000);
     } catch (e) {
       console.error(e);
@@ -650,7 +791,6 @@ class CalendarApp {
       for (const file of files) {
         await this.storage.deleteFile(file.path, file.sha);
       }
-      // 로컬 캐시 초기화
       this.storage.cache = {};
       await this.loadAndRender();
       this.closeSettings();
@@ -659,7 +799,7 @@ class CalendarApp {
       console.error(e);
       showToast(`삭제 실패: ${e.message}`, 'error');
     } finally {
-      if (btn) { btn.disabled = false; btn.textContent = '전체 데이터 삭제'; }
+      if (btn) { btn.disabled = false; btn.textContent = '🗑 전체 데이터 삭제'; }
     }
   }
 
@@ -683,6 +823,221 @@ class CalendarApp {
     showToast('설정이 저장되었습니다.', 'success');
     this.storage.cache = {};
     this.loadAndRender();
+  }
+
+  // ===================== List Panel =====================
+
+  switchListCat(cat) {
+    this.listCat = cat;
+    document.querySelectorAll('.list-tab-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.cat === cat));
+    this.renderListPanel();
+  }
+
+  // 날짜범위 적용 버튼
+  async applyListFilter() {
+    const from = document.getElementById('filter-from').value;
+    const to   = document.getElementById('filter-to').value;
+
+    if (!from && !to) {
+      // 초기화 → 현재 달로 돌아가기
+      this.listUsingRange = false;
+      this.listData = this.monthEntry?.data || {};
+      this.renderListPanel();
+      return;
+    }
+
+    const fromDate = from || `${this.year}-${String(this.month).padStart(2,'0')}-01`;
+    const toDate   = to   || `${this.year}-${String(this.month).padStart(2,'0')}-31`;
+
+    const btn = document.querySelector('.btn-filter-apply');
+    if (btn) { btn.disabled = true; btn.textContent = '로딩...'; }
+    try {
+      this.listData = await this.storage.loadRange(fromDate, toDate);
+      this.listUsingRange = true;
+      this.renderListPanel();
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = '적용'; }
+    }
+  }
+
+  // 합계 계산 버튼
+  calcSum() {
+    const fundFilter = document.getElementById('filter-fund').value.trim().toLowerCase();
+    const sumBar = document.getElementById('list-sum-bar');
+
+    // 설정환매 + 리소스 금액 합산
+    let 설환Total = 0;
+    let resTotal  = 0;
+    let setTotal  = 0;
+    let count설환  = 0;
+    let count리소스 = 0;
+
+    for (const [, dayData] of Object.entries(this.listData).sort()) {
+      // 설정환매
+      for (const item of (dayData['설정환매'] || [])) {
+        if (fundFilter && !item.fundCode?.toLowerCase().includes(fundFilter) &&
+            !item.fundName?.toLowerCase().includes(fundFilter)) continue;
+        설환Total += item.amountRaw || 0;
+        count설환++;
+      }
+      // 리소스
+      for (const item of (dayData['리소스'] || [])) {
+        const resMatch = !fundFilter ||
+          item.resFundCode?.toLowerCase().includes(fundFilter) ||
+          item.resFundName?.toLowerCase().includes(fundFilter);
+        const setMatch = !fundFilter ||
+          item.setFundCode?.toLowerCase().includes(fundFilter) ||
+          item.setFundName?.toLowerCase().includes(fundFilter);
+        if (!resMatch && !setMatch) continue;
+        if (resMatch) resTotal += item.resAmountRaw || 0;
+        if (setMatch) setTotal += item.setAmountRaw || 0;
+        count리소스++;
+      }
+    }
+
+    const lines = [];
+    if (count설환 > 0) lines.push(`설정환매 (${count설환}건): ${formatAmount(설환Total)}`);
+    if (count리소스 > 0) {
+      if (resTotal) lines.push(`리소스 (${count리소스}건): ${formatAmount(resTotal)}`);
+      if (setTotal) lines.push(`설정 (${count리소스}건): ${formatAmount(setTotal)}`);
+    }
+
+    if (lines.length === 0) {
+      sumBar.textContent = fundFilter
+        ? `펀드코드 "${fundFilter}" 해당 금액 없음`
+        : '합계 대상 없음 (설정환매·리소스 항목 필요)';
+    } else {
+      sumBar.textContent = lines.join('   /   ');
+    }
+    sumBar.classList.remove('hidden');
+  }
+
+  // 목록 패널 렌더링
+  renderListPanel() {
+    const container = document.getElementById('list-items');
+    container.innerHTML = '';
+    document.getElementById('list-sum-bar').classList.add('hidden');
+
+    const fundFilter = document.getElementById('filter-fund').value.trim().toLowerCase();
+    const dates = Object.keys(this.listData).sort();
+
+    if (dates.length === 0) {
+      container.innerHTML = '<div class="list-empty">데이터가 없습니다.</div>';
+      return;
+    }
+
+    let hasAny = false;
+
+    for (const dateStr of dates) {
+      const dayData = this.listData[dateStr];
+      const items = this.getListItems(dayData, this.listCat, fundFilter);
+      if (items.length === 0) continue;
+      hasAny = true;
+
+      // 날짜 헤더
+      const dateHeader = document.createElement('div');
+      dateHeader.className = 'list-date-header';
+      dateHeader.textContent = formatDateKo(dateStr);
+      container.appendChild(dateHeader);
+
+      // 아이템 목록
+      for (const { tab, item } of items) {
+        container.appendChild(this.renderListItem(tab, item));
+      }
+    }
+
+    if (!hasAny) {
+      container.innerHTML = '<div class="list-empty">해당 조건의 내역이 없습니다.</div>';
+    }
+  }
+
+  getListItems(dayData, cat, fundFilter) {
+    const result = [];
+    const tabs = cat === '전체'
+      ? ['일정', '업무', '설정환매', '리소스']
+      : [cat];
+
+    for (const tab of tabs) {
+      for (const item of (dayData[tab] || [])) {
+        if (fundFilter) {
+          // 펀드코드 필터: 설정환매·리소스·업무만 적용
+          if (tab === '설정환매') {
+            if (!item.fundCode?.toLowerCase().includes(fundFilter) &&
+                !item.fundName?.toLowerCase().includes(fundFilter)) continue;
+          } else if (tab === '리소스') {
+            const match = item.resFundCode?.toLowerCase().includes(fundFilter) ||
+                          item.resFundName?.toLowerCase().includes(fundFilter) ||
+                          item.setFundCode?.toLowerCase().includes(fundFilter) ||
+                          item.setFundName?.toLowerCase().includes(fundFilter);
+            if (!match) continue;
+          } else if (tab === '업무') {
+            if (!item.fundCode?.toLowerCase().includes(fundFilter)) continue;
+          }
+          // 일정은 펀드코드 필터 패스
+        }
+        result.push({ tab, item });
+      }
+    }
+    return result;
+  }
+
+  renderListItem(tab, item) {
+    const card = document.createElement('div');
+    card.className = `list-item-card list-item-${tab}`;
+
+    if (tab === '일정') {
+      card.innerHTML = `
+        <div class="li-badge" style="background:#0891b2">일정</div>
+        <div class="li-body">
+          <div class="li-title">${item.title || ''}</div>
+          ${item.detail ? `<div class="li-detail">${item.detail}</div>` : ''}
+        </div>`;
+
+    } else if (tab === '업무') {
+      const catColor = CAT_COLOR[item.category] || '#6b7280';
+      card.innerHTML = `
+        <div class="li-badge" style="background:${catColor}">${item.category || '업무'}</div>
+        <div class="li-body">
+          <div class="li-title">${item.title || ''}</div>
+          <div class="li-meta">
+            ${item.member ? `<span>${item.member}</span>` : ''}
+            ${item.fundCode ? `<span style="color:#0891b2">${item.fundCode}</span>` : ''}
+            ${item.checked ? '<span style="color:#94a3b8">✓완료</span>' : ''}
+          </div>
+        </div>`;
+
+    } else if (tab === '설정환매') {
+      card.innerHTML = `
+        <div class="li-badge" style="background:#dc2626">설정환매</div>
+        <div class="li-body">
+          <div class="li-title">${item.fundName || item.fundCode || '-'}</div>
+          <div class="li-meta">
+            ${item.fundCode ? `<span>${item.fundCode}</span>` : ''}
+            ${item.cu ? `<span>CU ${item.cu}</span>` : ''}
+            ${item.amount ? `<span style="font-weight:600">${item.amount}</span>` : ''}
+            ${item.counterparty ? `<span>${item.counterparty}</span>` : ''}
+          </div>
+        </div>`;
+
+    } else if (tab === '리소스') {
+      const resPart = (item.resFundCode || item.resAmountRaw)
+        ? `[리소스] ${item.resFundCode || ''} ${item.resFundName || ''} ${item.resAmountRaw ? formatAmount(item.resAmountRaw) : ''}`.trim()
+        : '';
+      const setPart = (item.setFundCode || item.setAmountRaw)
+        ? `[설정] ${item.setFundCode || ''} ${item.setFundName || ''} ${item.setAmountRaw ? formatAmount(item.setAmountRaw) : ''}`.trim()
+        : '';
+      card.innerHTML = `
+        <div class="li-badge" style="background:#f97316">${item.category || '리소스'}</div>
+        <div class="li-body">
+          <div class="li-title">${item.summary || ''}</div>
+          ${resPart ? `<div class="li-detail">${resPart}</div>` : ''}
+          ${setPart ? `<div class="li-detail">${setPart}</div>` : ''}
+          ${item.note ? `<div class="li-detail">비고: ${item.note}</div>` : ''}
+        </div>`;
+    }
+
+    return card;
   }
 }
 
